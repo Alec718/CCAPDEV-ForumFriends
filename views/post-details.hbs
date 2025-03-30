@@ -307,4 +307,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Disable reply buttons on click to prevent double submissions
+$(document).on('click', '.submit-reply', function () {
+  const $btn = $(this);
+  $btn.prop('disabled', true).text('Posting...');
+});
+
+// Disable edit comment submit button once clicked
+$('#editCommentForm').on('submit', function (e) {
+  $('#edit-comment-submit-btn').prop('disabled', true).text('Saving...');
+});
+
 </script>

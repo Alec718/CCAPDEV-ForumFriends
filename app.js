@@ -27,24 +27,24 @@ const uri = process.env.MONGODB_URI;
 
 // Initialize MongoClient
 const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  ssl: true
+  serverApi: { version: '1' } // Clean modern connection
 });
 
-// ✅ Session middleware — must be BEFORE any route that uses req.session
+
+//  Session middleware — must be BEFORE any route that uses req.session
 app.use(session({
   secret: 'forum-friends-secret',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: uri,
+    mongoUrl: uri, // using env variable for safety
     dbName: 'forumdb'
   }),
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     httpOnly: true,
-    secure: false // Set to true if using HTTPS
+    secure: true, // Set to true because Render uses HTTPS
+    sameSite: 'lax'
   }
 }));
 

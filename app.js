@@ -44,9 +44,9 @@ app.use(session({
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     httpOnly: true,
-    secure: true, // Set to true because Render uses HTTPS
+    secure: process.env.NODE_ENV === 'production', // only true on Render
     sameSite: 'lax'
-  }
+  }  
 }));
 
 // Handlebars setup

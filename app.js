@@ -7,9 +7,8 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const exphbs = require('express-handlebars');
-// ✅ Replaced connect-mongodb-session with connect-mongo
 const MongoStore = require('connect-mongo');
-const connectDB = require('./config/database');
+const { MongoClient } = require('mongodb');
 const methodOverride = require('method-override');
 const moment = require('moment');
 
@@ -23,19 +22,29 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 app.use(methodOverride('_method'));
 
-// ✅ Session middleware — must be BEFORE any route that needs req.session
+// Use MongoDB URI from environment variables
+const uri = process.env.MONGODB_URI;
+
+// Initialize MongoClient
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  ssl: true
+});
+
+// ✅ Session middleware — must be BEFORE any route that uses req.session
 app.use(session({
   secret: 'forum-friends-secret',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: "mongodb+srv://aamosdelacruz:FDTZyf1Qdb5xGsxu@mco-ccapdev-forumfriend.aje9dcs.mongodb.net/?retryWrites=true&w=majority&appName=MCO-CCAPDEV-ForumFriends",
+    mongoUrl: uri,
     dbName: 'forumdb'
   }),
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     httpOnly: true,
-    secure: false
+    secure: false // Set to true if using HTTPS
   }
 }));
 
@@ -58,12 +67,25 @@ app.engine('hbs', exphbs.engine({
 }));
 app.set('view engine', 'hbs');
 
+// Database connect function
+async function connectDB() {
+  try {
+    await client.connect();
+    console.log("Connected to MongoDB Atlas");
+    const db = client.db(); // uses default DB in URI
+    return db;
+  } catch (err) {
+    console.error("Failed to connect to MongoDB:", err);
+    throw err;
+  }
+}
+
 // Start server after DB connection
 connectDB().then((db) => {
   app.locals.db = db;
   console.log('Database connection stored in app.locals');
 
-  // Modularized routes come AFTER session middleware is applied
+  // Modularized routes
   const rootRoutes = require('./routes/rootRoutes');
   const userRoutes = require('./routes/userRoutes');
   const postRoutes = require('./routes/postRoutes');

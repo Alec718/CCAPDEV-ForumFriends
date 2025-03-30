@@ -26,9 +26,10 @@ app.use(methodOverride('_method'));
 const uri = process.env.MONGODB_URI;
 
 // Initialize MongoClient
-const client = new MongoClient(uri, {
-  serverApi: { version: '1' } // Clean modern connection
+const client = new MongoClient(process.env.MONGODB_URI, {
+  serverApi: { version: '1' }
 });
+
 
 
 //  Session middleware — must be BEFORE any route that uses req.session

@@ -1,3 +1,7 @@
+const express = require('express');
+const { ObjectId } = require('mongodb');
+const router = express.Router();
+
 // Middleware to ensure user is logged in
 function ensureAuthenticated(req, res, next) {
     if (req.session && req.session.user) {
@@ -6,33 +10,27 @@ function ensureAuthenticated(req, res, next) {
     return res.status(401).json({ error: 'User not authenticated' });
 }
 
-const express = require('express');
-const router = express.Router();
-const { ObjectId } = require('mongodb');
-const isAuthenticated = require('../middleware/auth');
-
-const Comment = require('../models/Comment');
-const Post = require('../models/Post');
-
 // Add a comment
 router.post('/post/:postId/comment', async (req, res) => {
+    const db = req.app.locals.db;
     const { postId } = req.params;
     const { commentText } = req.body;
     const username = req.session.user?.username;
 
-    if (!username) {
-        return res.status(401).send("Unauthorized. Please log in.");
-    }
+    if (!username) return res.status(401).send("Unauthorized. Please log in.");
 
     try {
-        const newComment = new Comment({
+        const newComment = {
             text: commentText,
             author: username,
             timestamp: new Date().toLocaleString(),
-            postId: new ObjectId(postId)
-        });
+            postId: new ObjectId(postId),
+            votes: 0,
+            voters: {},
+            parentCommentId: null
+        };
 
-        await newComment.save();
+        await db.collection('comments').insertOne(newComment);
         res.redirect(`/post/${postId}`);
     } catch (err) {
         console.error("Error adding comment:", err);
@@ -40,7 +38,7 @@ router.post('/post/:postId/comment', async (req, res) => {
     }
 });
 
-// Edit Comment Route (MODIFY)
+// Edit Comment Route
 router.post('/comment/:id/edit', async (req, res) => {
     const db = req.app.locals.db;
     const commentId = req.params.id;
@@ -59,17 +57,15 @@ router.post('/comment/:id/edit', async (req, res) => {
     }
 });
 
-
-// DELETE route to delete a comment
+// Delete Comment Route
 router.delete('/comment/:id/delete', async (req, res) => {
+    const db = req.app.locals.db;
+    const commentId = req.params.id;
+
     try {
-        const commentId = req.params.id;
+        const result = await db.collection('comments').deleteOne({ _id: new ObjectId(commentId) });
 
-        // Find and delete the comment by ID
-        const result = await Comment.findByIdAndDelete(commentId);
-
-        // Check if the comment was successfully deleted
-        if (result) {
+        if (result.deletedCount > 0) {
             return res.status(200).json({ message: 'Comment deleted successfully' });
         } else {
             return res.status(404).json({ error: 'Comment not found' });
@@ -88,7 +84,6 @@ router.get('/post/:postId/comments', async (req, res) => {
     try {
         const comments = await db.collection('comments').find({ postId: new ObjectId(postId) }).toArray();
 
-        // Nest comments by parentCommentId
         const nestComments = (comments) => {
             const map = {};
             const roots = [];
@@ -99,7 +94,7 @@ router.get('/post/:postId/comments', async (req, res) => {
 
             comments.forEach(comment => {
                 if (comment.parentCommentId) {
-                    map[comment.parentCommentId].replies.push(map[comment._id]);
+                    map[comment.parentCommentId]?.replies.push(map[comment._id]);
                 } else {
                     roots.push(map[comment._id]);
                 }
@@ -116,38 +111,33 @@ router.get('/post/:postId/comments', async (req, res) => {
     }
 });
 
-
-// Reply to Comment or Reply Route (POST)
+// Reply to Comment or Reply
 router.post('/comment/:id/reply', async (req, res) => {
     const db = req.app.locals.db;
     const parentCommentId = req.params.id;
     const { text, postId } = req.body;
-    const author = req.session.user.username;
+    const author = req.session.user?.username;
+
+    if (!text || !postId) {
+        return res.status(400).json({ error: 'Text and Post ID are required.' });
+    }
 
     try {
-        // Validate the input
-        if (!text || !postId) {
-            return res.status(400).json({ error: 'Text and Post ID are required.' });
-        }
-
-        // Check if parent comment exists
         const parentComment = await db.collection('comments').findOne({ _id: new ObjectId(parentCommentId) });
         if (!parentComment) {
             return res.status(404).json({ error: 'Parent comment not found.' });
         }
 
-        // Construct the reply object
         const reply = {
             text: text,
             author: author,
             timestamp: new Date(),
             votes: 0,
             voters: {},
-            parentCommentId: new ObjectId(parentCommentId), // Link to parent comment or reply
-            postId: new ObjectId(postId) // Link to the post
+            parentCommentId: new ObjectId(parentCommentId),
+            postId: new ObjectId(postId)
         };
 
-        // Insert the reply
         const result = await db.collection('comments').insertOne(reply);
         const insertedReply = await db.collection('comments').findOne({ _id: result.insertedId });
 
@@ -158,88 +148,88 @@ router.post('/comment/:id/reply', async (req, res) => {
     }
 });
 
-
-
-
-// Upvote Comment (POST)
+// Upvote Comment
 router.post('/comment/:id/upvote', async (req, res) => {
-    try {
-        const commentId = req.params.id;
-        const userId = req.body.userId;
+    const db = req.app.locals.db;
+    const commentId = req.params.id;
+    const userId = req.session.user?.username;
 
-        const comment = await Comment.findById(commentId);
+    if (!ObjectId.isValid(commentId)) return res.status(400).json({ error: 'Invalid comment ID' });
+
+    try {
+        const comment = await db.collection('comments').findOne({ _id: new ObjectId(commentId) });
         if (!comment) return res.status(404).json({ error: 'Comment not found' });
 
-        if (!comment.voters) comment.voters = new Map();
-        if (!(comment.voters instanceof Map)) {
-            comment.voters = new Map(Object.entries(comment.voters));
-        }
-
-        const currentVote = comment.voters.get(userId);
+        const voters = comment.voters || {};
+        const currentVote = voters[userId];
+        let voteChange = 0;
 
         if (currentVote === 'upvote') {
-            // Cancel upvote
-            comment.votes -= 1;
-            comment.voters.delete(userId);
+            delete voters[userId];
+            voteChange = -1;
         } else if (currentVote === 'downvote') {
-            // Switch from downvote to upvote
-            comment.votes += 2;
-            comment.voters.set(userId, 'upvote');
+            voters[userId] = 'upvote';
+            voteChange = 2;
         } else {
-            // First-time upvote
-            comment.votes += 1;
-            comment.voters.set(userId, 'upvote');
+            voters[userId] = 'upvote';
+            voteChange = 1;
         }
 
-        await comment.save();
-        res.status(200).json({ votes: comment.votes });
+        await db.collection('comments').updateOne(
+            { _id: new ObjectId(commentId) },
+            {
+                $set: { voters: voters },
+                $inc: { votes: voteChange }
+            }
+        );
 
+        res.status(200).json({ votes: comment.votes + voteChange });
     } catch (err) {
         console.error('Error upvoting comment:', err);
         res.status(500).json({ error: 'Failed to upvote comment' });
     }
 });
 
-
-// Downvote comment
+// Downvote Comment
 router.post('/comment/:id/downvote', async (req, res) => {
-    try {
-        const commentId = req.params.id;
-        const userId = req.body.userId;
+    const db = req.app.locals.db;
+    const commentId = req.params.id;
+    const userId = req.session.user?.username;
 
-        const comment = await Comment.findById(commentId);
+    if (!ObjectId.isValid(commentId)) return res.status(400).json({ error: 'Invalid comment ID' });
+
+    try {
+        const comment = await db.collection('comments').findOne({ _id: new ObjectId(commentId) });
         if (!comment) return res.status(404).json({ error: 'Comment not found' });
 
-        if (!comment.voters) comment.voters = new Map();
-        if (!(comment.voters instanceof Map)) {
-            comment.voters = new Map(Object.entries(comment.voters));
-        }
-
-        const currentVote = comment.voters.get(userId);
+        const voters = comment.voters || {};
+        const currentVote = voters[userId];
+        let voteChange = 0;
 
         if (currentVote === 'downvote') {
-            // Cancel downvote
-            comment.votes += 1;
-            comment.voters.delete(userId);
+            delete voters[userId];
+            voteChange = 1;
         } else if (currentVote === 'upvote') {
-            // Switch from upvote to downvote
-            comment.votes -= 2;
-            comment.voters.set(userId, 'downvote');
+            voters[userId] = 'downvote';
+            voteChange = -2;
         } else {
-            // First-time downvote
-            comment.votes -= 1;
-            comment.voters.set(userId, 'downvote');
+            voters[userId] = 'downvote';
+            voteChange = -1;
         }
 
-        await comment.save();
-        res.status(200).json({ votes: comment.votes });
+        await db.collection('comments').updateOne(
+            { _id: new ObjectId(commentId) },
+            {
+                $set: { voters: voters },
+                $inc: { votes: voteChange }
+            }
+        );
 
+        res.status(200).json({ votes: comment.votes + voteChange });
     } catch (err) {
         console.error('Error downvoting comment:', err);
         res.status(500).json({ error: 'Failed to downvote comment' });
     }
 });
-
-
 
 module.exports = router;

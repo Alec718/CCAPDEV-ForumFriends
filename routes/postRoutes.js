@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
-const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 
 // Home Route (MODIFY)
@@ -105,13 +104,18 @@ router.get('/post/:postId', async (req, res) => {
 
         // Helper function to build nested comments
         const buildNestedComments = (comments, parentId = null) => {
+            const clone = (obj) => JSON.parse(JSON.stringify(obj));
+          
             return comments
-                .filter(comment => String(comment.parentCommentId) === String(parentId))
-                .map(comment => ({
-                    ...comment,
-                    replies: buildNestedComments(comments, comment._id)
-                }));
-        };
+              .filter(comment => String(comment.parentCommentId) === String(parentId))
+              .map(comment => {
+                const cloned = clone(comment); // deep clone so replies don’t share object references
+                cloned.replies = buildNestedComments(comments, comment._id);
+                return cloned;
+              });
+          };
+          
+          
 
         // Construct the nested comment structure
         const nestedComments = buildNestedComments(comments);
@@ -181,35 +185,40 @@ router.post('/create-post', async (req, res) => {
 
 // Upvote a Post
 router.post('/post/:id/upvote', async (req, res) => {
-    try {
-        const postId = req.params.id;
-        const userId = req.session.user.username;
+    const db = req.app.locals.db;
+    const postId = req.params.id;
+    const userId = req.session.user?.username;
 
-        const post = await Post.findById(postId);
+    if (!ObjectId.isValid(postId)) return res.status(400).send("Invalid post ID");
+
+    try {
+        const post = await db.collection('posts').findOne({ _id: new ObjectId(postId) });
         if (!post) return res.status(404).send('Post not found');
 
-        if (!post.voters) post.voters = new Map();
-        if (!(post.voters instanceof Map)) {
-            post.voters = new Map(Object.entries(post.voters));
-        }
+        const voters = post.voters || {};
+        const currentVote = voters[userId];
 
-        const currentVote = post.voters.get(userId);
+        let voteChange = 0;
 
         if (currentVote === 'upvote') {
-            // Cancel upvote
-            post.votes -= 1;
-            post.voters.delete(userId);
+            delete voters[userId];
+            voteChange = -1;
         } else if (currentVote === 'downvote') {
-            // Switch from downvote to upvote
-            post.votes += 2;
-            post.voters.set(userId, 'upvote');
+            voters[userId] = 'upvote';
+            voteChange = 2;
         } else {
-            // First-time upvote
-            post.votes += 1;
-            post.voters.set(userId, 'upvote');
+            voters[userId] = 'upvote';
+            voteChange = 1;
         }
 
-        await post.save();
+        await db.collection('posts').updateOne(
+            { _id: new ObjectId(postId) },
+            {
+                $set: { voters: voters },
+                $inc: { votes: voteChange }
+            }
+        );
+
         res.redirect('back');
     } catch (err) {
         console.error('Upvote failed:', err);
@@ -218,44 +227,49 @@ router.post('/post/:id/upvote', async (req, res) => {
 });
 
 
+
 // Downvote a post
 router.post('/post/:id/downvote', async (req, res) => {
-    try {
-        const postId = req.params.id;
-        const userId = req.session.user.username;
+    const db = req.app.locals.db;
+    const postId = req.params.id;
+    const userId = req.session.user?.username;
 
-        const post = await Post.findById(postId);
+    if (!ObjectId.isValid(postId)) return res.status(400).send("Invalid post ID");
+
+    try {
+        const post = await db.collection('posts').findOne({ _id: new ObjectId(postId) });
         if (!post) return res.status(404).send('Post not found');
 
-        if (!post.voters) post.voters = new Map();
-        if (!(post.voters instanceof Map)) {
-            post.voters = new Map(Object.entries(post.voters));
-        }
+        const voters = post.voters || {};
+        const currentVote = voters[userId];
 
-        const currentVote = post.voters.get(userId);
+        let voteChange = 0;
 
         if (currentVote === 'downvote') {
-            // Cancel downvote
-            post.votes += 1;
-            post.voters.delete(userId);
+            delete voters[userId];
+            voteChange = 1;
         } else if (currentVote === 'upvote') {
-            // Switch from upvote to downvote
-            post.votes -= 2;
-            post.voters.set(userId, 'downvote');
+            voters[userId] = 'downvote';
+            voteChange = -2;
         } else {
-            // First-time downvote
-            post.votes -= 1;
-            post.voters.set(userId, 'downvote');
+            voters[userId] = 'downvote';
+            voteChange = -1;
         }
 
-        await post.save();
+        await db.collection('posts').updateOne(
+            { _id: new ObjectId(postId) },
+            {
+                $set: { voters: voters },
+                $inc: { votes: voteChange }
+            }
+        );
+
         res.redirect('back');
     } catch (err) {
         console.error('Downvote failed:', err);
         res.status(500).send('Downvote error');
     }
 });
-
 
 
 // Update Post Route

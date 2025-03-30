@@ -217,10 +217,11 @@
       });
     });
 
-    // Voting
+    // Voting (FIXED)
     $(document).on('click', '.upvote-btn, .downvote-btn', function () {
       const isUpvote = $(this).hasClass('upvote-btn');
-      const container = $(this).closest('.comment-item, .nested-comment');
+      const $button = $(this);
+      const container = $button.closest('.nested-comment');
       const commentId = container.data('comment-id');
 
       $.ajax({
@@ -229,13 +230,14 @@
         contentType: 'application/json',
         data: JSON.stringify({ userId: '{{user.username}}' }),
         success: function (response) {
-          container.find('.vote-count').text(response.votes);
+          $button.siblings('.vote-count').text(response.votes);
         },
         error: function (xhr) {
           alert(`Error voting: ${xhr.responseText}`);
         }
       });
     });
+
 
     // Edit Comment Modal logic
     $('#editCommentModal').on('show.bs.modal', function (event) {

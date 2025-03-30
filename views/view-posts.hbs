@@ -1,0 +1,36 @@
+{{!-- view-posts.hbs --}}
+<header class="header" style="height: auto; padding: 10px 0;">
+  <div class="container d-flex justify-content-between align-items-center">
+    <img src="/images/forum-friends-logo.png" alt="Forum Friends Logo" style="width: 180px; height: auto;" />
+    <nav class="d-flex gap-3">
+      <a href="/home" class="nav-link">Home</a>
+      <a href="/profile/{{user.username}}" class="nav-link">Profile</a>
+      <a href="/logout" class="nav-link">Logout</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container py-5">
+  <h3 class="text-center mb-4">All Posts by {{userProfile.username}}</h3>
+
+  {{#if posts.length}}
+    <section class="content-section">
+      {{#each posts}}
+        <div class="post mb-4 border-bottom pb-3">
+          <h5><a href="/post/{{this._id}}" class="text-decoration-none fw-bold">{{this.title}}</a></h5>
+          <p class="text-muted">Posted on {{this.timestamp}} • {{this.votes}} upvotes</p>
+        </div>
+      {{/each}}
+    </section>
+  {{else}}
+    <p class="text-center text-muted">No posts yet.</p>
+  {{/if}}
+
+  <div class="text-center mt-4">
+    <a href="/profile/{{userProfile.username}}" class="btn btn-secondary">Back to Profile</a>
+  </div>
+</main>
+
+<footer class="text-center py-3">
+  <p class="text-muted">&copy; 2025 Forum Friends</p>
+</footer>

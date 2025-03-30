@@ -1,0 +1,295 @@
+{{!-- post-details.hbs --}}
+<header class="header">
+  <div class="container d-flex justify-content-between align-items-center">
+    <img src="/images/forum-friends-logo.png" alt="Forum Friends Logo" class="logo" style="width:180px; height:auto;" />
+    <nav class="d-flex gap-3">
+      <a href="/home" class="nav-link">Home</a>
+      <a href="/profile/{{user.username}}" class="nav-link">Profile</a>
+      <a href="/logout" class="nav-link">Logout</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container mt-4">
+  <div class="row">
+    <!-- Popular Posts -->
+    <aside class="col-lg-3 d-none d-lg-block">
+      <div class="filter-section">
+        <h5>Popular Posts</h5>
+        {{#if popularPosts.length}}
+          <ul class="list-unstyled">
+            {{#each popularPosts}}
+              <li class="mb-2">
+                <a href="/post/{{_id}}" class="text-decoration-none fw-bold">{{title}}</a>
+                <p class="small text-muted">{{votes}} upvotes</p>
+              </li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <p class="text-muted">No popular posts yet.</p>
+        {{/if}}
+      </div>
+    </aside>
+
+    <!-- Main Section -->
+    <section class="col-lg-9">
+      <!-- Back Button -->
+      <div class="mb-3">
+        <a href="/home" style="text-decoration:none;">
+          <img src="https://cdn-icons-png.flaticon.com/512/93/93634.png" alt="Back" style="width:24px; height:24px;">
+        </a>
+      </div>
+
+      <!-- Post Container -->
+      <div class="post-container position-relative">
+        <input type="hidden" id="postId" value="{{post._id}}">
+
+        {{#if (eq post.author user.username)}}
+          <div class="position-absolute" style="top: 10px; right: 10px; display: flex; gap: 5px;">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              id="openEditPostBtn"
+              data-bs-toggle="modal"
+              data-bs-target="#editPostModal"
+              data-title="{{post.title}}"
+              data-content="{{post.content}}"
+            >
+              Edit
+            </button>
+            <form action="/post/{{post._id}}/delete" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this post?');">Delete</button>
+            </form>
+          </div>
+        {{/if}}
+
+        <h1 class="post-title">{{post.title}}</h1>
+        <p class="post-meta">Posted by {{post.author}} on {{formatDate post.timestamp}}</p>
+        <!-- Post Category -->
+        <p class="mb-1">
+          <strong>Category:</strong> <span class="badge bg-secondary">{{post.category}}</span>
+        </p>
+
+        <!-- Post Tags -->
+        {{#if post.tags.length}}
+          <p>
+            <strong>Tags:</strong>
+            {{#each post.tags}}
+              <span class="badge bg-info text-dark me-1">{{this}}</span>
+            {{/each}}
+          </p>
+        {{/if}}
+
+        <p>{{post.content}}</p>
+
+        <!-- Post Voting -->
+        <div class="post-vote d-flex align-items-center gap-2 mb-3">
+          <form action="/post/{{post._id}}/upvote" method="POST">
+            <button type="submit" class="vote-button upvote {{#if (eq post.voters.[user.id] "upvote")}}active{{/if}}">↑</button>
+          </form>
+          <span class="vote-count fw-bold">{{post.votes}}</span>
+          <form action="/post/{{post._id}}/downvote" method="POST">
+            <button type="submit" class="vote-button downvote {{#if (eq post.voters.[user.id] "downvote")}}active{{/if}}">↓</button>
+          </form>
+        </div>
+
+
+        <!-- Comments -->
+        <div class="comment-section mt-5">
+          <h4>Comments</h4>
+          {{#each comments}}
+            {{#unless parentCommentId}}
+              {{> comment-partial this user=../user allComments=../comments}}
+            {{/unless}}
+          {{/each}}
+        </div>
+
+        <!-- Add Comment -->
+        <div class="comment-box mt-4">
+          <h5>Add a Comment</h5>
+          <form action="/post/{{post._id}}/comment" method="POST">
+            <div class="mb-3">
+              <textarea class="form-control" name="commentText" rows="3" placeholder="Write your comment here..." required></textarea>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary">Post Comment</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Edit Post Modal -->
+<div class="modal fade" id="editPostModal" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <form id="editPostForm" action="/post/{{post._id}}/edit" method="POST" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editPostModalLabel">Edit Post</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="editTitle" class="form-label">Title</label>
+          <input type="text" class="form-control" id="editTitle" name="postTitle" required>
+        </div>
+        <div class="mb-3">
+          <label for="editContent" class="form-label">Content</label>
+          <textarea class="form-control" id="editContent" name="postContent" rows="6" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-success">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Comment Modal -->
+<div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="editCommentForm" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editCommentId">
+        <div class="mb-3">
+          <label for="editCommentText" class="form-label">Comment</label>
+          <textarea class="form-control" id="editCommentText" rows="4" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-success">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer class="text-center py-3">
+  <p class="text-muted mb-0">&copy; 2025 Forum Friends</p>
+</footer>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $('#openEditPostBtn').on('click', function () {
+      const title = $(this).data('title');
+      const content = $(this).data('content');
+      $('#editTitle').val(title);
+      $('#editContent').val(content);
+    });
+
+    // Reply Toggle
+    $(document).on('click', '.reply-btn', function () {
+      const container = $(this).closest('.comment-item, .nested-comment');
+      container.find('.reply-form').toggle();
+    });
+
+    $(document).on('click', '.cancel-reply', function () {
+      $(this).closest('.reply-form').hide();
+    });
+
+    $(document).on('click', '.submit-reply', function () {
+      const container = $(this).closest('.comment-item, .nested-comment');
+      const replyText = container.find('.reply-text').val();
+      const commentId = container.data('comment-id');
+      const postId = $('#postId').val();
+
+      $.ajax({
+        url: `/comment/${commentId}/reply`,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ text: replyText, postId }),
+        success: function () {
+          location.reload();
+        },
+        error: function (xhr) {
+          alert('Error adding reply: ' + xhr.responseText);
+        }
+      });
+    });
+
+    // Voting
+    $(document).on('click', '.upvote-btn, .downvote-btn', function () {
+      const isUpvote = $(this).hasClass('upvote-btn');
+      const container = $(this).closest('.comment-item, .nested-comment');
+      const commentId = container.data('comment-id');
+
+      $.ajax({
+        url: `/comment/${commentId}/${isUpvote ? 'upvote' : 'downvote'}`,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ userId: '{{user.username}}' }),
+        success: function (response) {
+          container.find('.vote-count').text(response.votes);
+        },
+        error: function (xhr) {
+          alert(`Error voting: ${xhr.responseText}`);
+        }
+      });
+    });
+
+    // Edit Comment Modal logic
+    $('#editCommentModal').on('show.bs.modal', function (event) {
+      const button = $(event.relatedTarget);
+      const commentId = button.data('id');
+      const commentText = button.data('text');
+
+      $('#editCommentId').val(commentId);
+      $('#editCommentText').val(commentText);
+    });
+
+    // Submit edited comment
+    $('#editCommentForm').on('submit', function (e) {
+      e.preventDefault();
+      const commentId = $('#editCommentId').val();
+      const newText = $('#editCommentText').val();
+
+      $.ajax({
+        url: `/comment/${commentId}/edit`,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ text: newText }),
+        success: function () {
+          location.reload();
+        },
+        error: function (xhr) {
+          alert('Error updating comment: ' + xhr.responseText);
+        }
+      });
+    });
+  });
+
+  // Delete comment/reply
+$(document).on('click', '.delete-btn', function () {
+  const container = $(this).closest('.nested-comment');
+  const commentId = container.data('comment-id');
+
+  if (!commentId) {
+    alert("Error: Comment ID not found.");
+    return;
+  }
+
+  if (confirm('Are you sure you want to delete this comment?')) {
+    $.ajax({
+      url: `/comment/${commentId}/delete`,
+      method: 'DELETE',
+      success: function () {
+        container.remove();
+      },
+      error: function (xhr) {
+        alert('Error deleting comment: ' + xhr.responseText);
+      }
+    });
+  }
+});
+
+</script>

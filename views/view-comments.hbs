@@ -1,0 +1,46 @@
+{{!-- view-comments.hbs --}}
+<header class="header">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a href="/home">
+      <img src="/images/forum-friends-logo.png" alt="Forum Friends Logo" class="logo" style="width:180px; height:auto;" />
+    </a>
+    <nav class="d-flex gap-3">
+      <a href="/home" class="nav-link">Home</a>
+      <a href="/profile/{{user.username}}" class="nav-link">Profile</a>
+      <a href="/logout" class="nav-link">Logout</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container py-5">
+  <h3 class="text-center mb-4">All Comments by {{userProfile.username}}</h3>
+
+  {{#if comments.length}}
+    <section class="content-section">
+      {{#each comments}}
+        <div class="comment-item mb-4 border-bottom pb-3">
+          <p>"{{this.text}}"</p>
+          <p class="text-muted">
+            On: 
+            {{#if this.postId}}
+              <a href="/post/{{this.postId}}" class="fw-bold text-decoration-none">View Post</a>
+            {{else}}
+              <em>(Post removed)</em>
+            {{/if}} 
+            • {{this.timestamp}}
+          </p>
+        </div>
+      {{/each}}
+    </section>
+  {{else}}
+    <p class="text-center text-muted">No comments yet.</p>
+  {{/if}}
+
+  <div class="text-center mt-4">
+    <a href="/profile/{{userProfile.username}}" class="btn btn-secondary">Back to Profile</a>
+  </div>
+</main>
+
+<footer class="text-center py-3">
+  <p class="text-muted">&copy; 2025 Forum Friends</p>
+</footer>

@@ -1,0 +1,102 @@
+{{!-- home.hbs --}}
+<header class="header" style="height: auto; padding: 10px 0;">
+  <div class="container d-flex justify-content-between align-items-center">
+    <img src="/images/forum-friends-logo.png" alt="Forum Friends Logo" style="width: 180px; height:auto;" />
+    <nav class="d-flex gap-3">
+      <a href="/home" class="nav-link active">Home</a>
+      <a href="/profile/{{user.username}}" class="nav-link">Profile</a>
+      <a href="/logout" class="nav-link">Logout</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container mt-4" style="min-height: 70vh;">
+  <div class="row">
+    <!-- Left Sidebar: Popular Posts -->
+    <aside class="col-lg-3 d-none d-lg-block">
+      <div class="filter-section">
+        <h5>Popular Posts</h5>
+        {{#if popularPosts.length}}
+          <ul class="list-unstyled">
+            {{#each popularPosts}}
+              <li class="mb-2">
+                <a href="/post/{{_id}}" class="text-decoration-none fw-bold">{{title}}</a>
+                <p class="small text-muted">{{votes}} upvotes</p>
+              </li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <p class="text-muted">No popular posts yet.</p>
+        {{/if}}
+      </div>
+    </aside>
+
+
+    <!-- Main Post List -->
+    <section class="col-lg-6">
+      {{#if posts.length}}
+        {{#each posts}}
+          <div class="post-card mb-3 position-relative d-flex align-items-start p-3 rounded shadow-sm" style="background-color: #f8f9fa;">
+            
+            {{!-- Profile Picture on the Top Left --}}
+            <a href="/profile/{{this.author}}" class="me-3" style="position: absolute; top: 10px; left: 10px;">
+              <img src="{{this.profilePicture}}" alt="Profile Picture" 
+                  class="rounded-circle border" 
+                  style="width: 45px; height: 45px; object-fit: cover;">
+            </a>
+
+            <div class="ms-5">
+              <a href="/post/{{_id}}" class="post-title h5 text-decoration-none">{{this.title}}</a>
+
+              <p class="text-muted small mb-1">
+                {{this.commentCount}} {{#if (eq this.commentCount 1)}}comment{{else}}comments{{/if}}
+              </p>
+
+              <p class="post-meta text-muted">
+                Posted by <a href="/profile/{{this.author}}" class="text-decoration-none">{{this.author}}</a> on {{this.timestamp}}
+              </p>
+
+              <p class="mb-0">{{this.content}}</p>
+            </div>
+            
+          </div>
+        {{/each}}
+      {{else}}
+        <div class="post-card text-center p-4">
+          <p class="mb-2">No posts have been created yet.</p>
+          <p class="mb-0">Click the <strong>+</strong> button below to create your first post!</p>
+        </div>
+      {{/if}}
+    </section>
+
+    <!-- Right Sidebar: Filters -->
+    <aside class="col-lg-3">
+      <div class="filter-section">
+        <h5>Filter Posts</h5>
+        <form method="GET" action="/home">
+          <input type="text"
+                class="form-control search-bar"
+                name="tags"
+                placeholder="Enter tags (comma-separated)"
+                value="{{query.tags}}">
+
+          <label class="form-label mt-2">Select Category</label>
+          <select class="form-select mb-3" name="category">
+            <option value="" {{#unless query.category}}selected{{/unless}}>All Topics</option>
+            <option value="Technology" {{#if (eq query.category "Technology")}}selected{{/if}}>Technology</option>
+            <option value="Gaming" {{#if (eq query.category "Gaming")}}selected{{/if}}>Gaming</option>
+            <option value="Design" {{#if (eq query.category "Design")}}selected{{/if}}>Design</option>
+          </select>
+
+          <button type="submit" class="btn btn-primary mt-3 w-100">Apply Filters</button>
+        </form>
+    </aside>
+  </div>
+</main>
+
+<!-- Floating Create Post Button -->
+<a href="/create-post" class="create-post-btn text-decoration-none">+</a>
+
+<footer class="text-center py-3" style="background-color: #FFFFFF; border-top: 1px solid #E0E0E0;">
+  <p class="text-muted mb-0">&copy; 2025 Forum Friends</p>
+</footer>

@@ -1,0 +1,42 @@
+<div class="nested-comment border-start ps-3 mt-2 position-relative" data-comment-id="{{_id}}">
+  <div class="d-flex justify-content-between align-items-start">
+    <p class="mb-1"><strong>{{author}}</strong> on {{formatDate timestamp}}</p>
+    {{#if (eq author user.username)}}
+      <div class="d-flex gap-2">
+        <button type="button"
+                class="btn btn-sm btn-outline-primary edit-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#editCommentModal"
+                data-id="{{_id}}"
+                data-text="{{text}}">
+          Edit
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger delete-btn">Delete</button>
+      </div>
+    {{/if}}
+  </div>
+
+  <p class="comment-text">{{text}}</p>
+
+  <div class="d-flex align-items-center gap-2 mb-2">
+    <button class="vote-button upvote upvote-btn">↑</button>
+    <span class="vote-count fw-bold">{{votes}}</span>
+    <button class="vote-button downvote downvote-btn">↓</button>
+  </div>
+
+  <button class="btn btn-sm btn-primary reply-btn">Reply</button>
+
+  <div class="reply-form mt-2" style="display: none;">
+    <textarea class="form-control reply-text" rows="2" placeholder="Write your reply..."></textarea>
+    <div class="d-flex gap-2 mt-2">
+      <button class="btn btn-sm btn-success submit-reply">Submit</button>
+      <button class="btn btn-sm btn-secondary cancel-reply">Cancel</button>
+    </div>
+  </div>
+
+  <div class="nested-replies ms-4 mt-2">
+    {{#each replies}}
+      {{> comment-partial this user=../user allComments=../allComments }}
+    {{/each}}
+  </div>
+</div>

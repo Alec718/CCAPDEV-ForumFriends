@@ -1,0 +1,77 @@
+{{!-- login.hbs --}}
+<header class="header header-login" style="height: auto; padding: 10px 0;">
+  <div class="container d-flex justify-content-center align-items-center">
+    <img src="/images/forum-friends-logo.png" 
+         alt="Forum Friends Logo" 
+         style="width: 200px; height: auto;" />
+  </div>
+</header>
+
+<main class="py-5">
+  <div class="container d-flex justify-content-center" style="min-height: 60vh;">
+    <div class="row justify-content-center w-100">
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card p-4 shadow">
+          <h3 class="text-center mb-4">Login</h3>
+
+          {{#if error}}
+            <div class="alert alert-danger text-center">
+              {{error}}
+            </div>
+          {{/if}}
+
+          <form method="POST" action="/login">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                name="username" 
+                id="username" 
+                placeholder="Enter username"
+                value="{{rememberedUsername}}" 
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input 
+                type="password" 
+                class="form-control" 
+                name="password" 
+                id="password" 
+                placeholder="Enter password"
+                required
+              />
+            </div>
+            <div class="mb-3 form-check">
+              <input 
+                type="checkbox" 
+                class="form-check-input" 
+                name="rememberMe" 
+                id="rememberMe" 
+                {{#if rememberMe}}checked{{/if}}
+              />
+              <label class="form-check-label" for="rememberMe">Remember me</label>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+          </form>
+          <div class="text-center mt-3">
+            <p class="mb-1">
+              Don't have an account? 
+              <a href="/register" class="text-decoration-none">Sign Up</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="text-center py-3">
+  <div class="container">
+    <p class="text-muted mb-0">&copy; 2025 Forum Friends</p>
+  </div>
+</footer>

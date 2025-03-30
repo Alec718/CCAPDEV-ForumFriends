@@ -4,8 +4,14 @@
     <img src="/images/forum-friends-logo.png" alt="Forum Friends Logo" style="width: 180px; height:auto;" />
     <nav class="d-flex gap-3">
       <a href="/home" class="nav-link active">Home</a>
-      <a href="/profile/{{user.username}}" class="nav-link">Profile</a>
-      <a href="/logout" class="nav-link">Logout</a>
+
+      {{#if user}}
+        <a href="/profile/{{user.username}}" class="nav-link">Profile</a>
+        <a href="/logout" class="nav-link">Logout</a>
+      {{else}}
+        <a href="/login" class="nav-link">Login</a>
+        <a href="/register" class="nav-link">Register</a>
+      {{/if}}
     </nav>
   </div>
 </header>

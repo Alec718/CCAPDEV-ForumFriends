@@ -21,7 +21,23 @@ router.post('/login', async (req, res) => {
   try {
     const user = await db.collection('users').findOne({ username });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      console.log("❌ Login failed: user not found for", username);
+      return res.render('login', {
+        title: 'Forum Friends - Login',
+        error: 'Invalid username or password.'
+      });
+    }
+
+    console.log("✅ User found:", user);
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log("🔐 Password entered:", password);
+    console.log("🔐 Password in DB:", user.password);
+    console.log("🔐 Password match:", isMatch);
+
+    if (!isMatch) {
+      console.log("❌ Login failed: password mismatch for", username);
       return res.render('login', {
         title: 'Forum Friends - Login',
         error: 'Invalid username or password.'
@@ -34,15 +50,18 @@ router.post('/login', async (req, res) => {
       profilePicture: user.profilePicture,
     };
 
+    console.log("✅ Login successful for:", username);
     res.redirect('/home');
+
   } catch (err) {
-    console.error('Error during login:', err);
+    console.error('🔥 Error during login:', err);
     res.render('login', {
       title: 'Forum Friends - Login',
       error: 'An error occurred during authentication.'
     });
   }
 });
+
 
 // Registration Page
 router.get('/register', (req, res) => {

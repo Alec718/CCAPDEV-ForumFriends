@@ -232,10 +232,15 @@ router.post('/edit-profile/:username', async (req, res) => {
   }
 });
 
-// View All Posts by User
-router.get('/profile/:username/posts', async (req, res) => {
+// View All Posts by User: Only logged-in user can view their posts
+router.get('/profile/:username/posts', isAuthenticated, async (req, res) => {
   const db = req.app.locals.db;
   const username = req.params.username;
+
+  // Allow only logged-in user to see their posts
+  if (req.session.user.username !== username) {
+    return res.status(403).send("You are not authorized to view this user's posts.");
+  }
 
   try {
     const user = await db.collection('users').findOne({ username });
@@ -247,7 +252,7 @@ router.get('/profile/:username/posts', async (req, res) => {
       userProfile: user,
       posts: posts,
       title: `${username}'s Posts`,
-      user: req.session.user
+      user: req.session.user // Pass the logged-in user data
     });
   } catch (err) {
     console.error("Error fetching user posts:", err);
@@ -255,10 +260,17 @@ router.get('/profile/:username/posts', async (req, res) => {
   }
 });
 
-// View All Comments by User
-router.get('/profile/:username/comments', async (req, res) => {
+
+
+// View All Comments by User: Only logged-in user can view their comments
+router.get('/profile/:username/comments', isAuthenticated, async (req, res) => {
   const db = req.app.locals.db;
   const username = req.params.username;
+
+  // Allow only logged-in user to see their comments
+  if (req.session.user.username !== username) {
+    return res.status(403).send("You are not authorized to view this user's comments.");
+  }
 
   try {
     const user = await db.collection('users').findOne({ username });
@@ -266,22 +278,18 @@ router.get('/profile/:username/comments', async (req, res) => {
 
     const comments = await db.collection('comments').find({ author: username }).toArray();
 
-    comments.forEach(comment => {
-      if (comment.postId && typeof comment.postId !== 'string') {
-        comment.postId = comment.postId.toString();
-      }
-    });
-
     res.render('view-comments', {
       userProfile: user,
       comments: comments,
       title: `${username}'s Comments`,
-      user: req.session.user
+      user: req.session.user // Pass the logged-in user data
     });
   } catch (err) {
     console.error("Error fetching user comments:", err);
     res.status(500).send("Internal Server Error");
   }
 });
+
+
 
 module.exports = router;

@@ -47,15 +47,24 @@ router.post('/comment/:id/edit', async (req, res) => {
     try {
         await db.collection('comments').updateOne(
             { _id: new ObjectId(commentId) },
-            { $set: { text: text } }
+            { $set: { text: text, editedAt: new Date() } }
         );
 
-        res.status(200).json({ message: 'Comment updated successfully.' });
+        // Send success message and reload post details page
+        const updatedComment = await db.collection('comments').findOne({ _id: new ObjectId(commentId) });
+
+        res.render('post-details', {
+            successMessage: 'Comment edited successfully!',
+            post: await db.collection('posts').findOne({ _id: new ObjectId(updatedComment.postId) }),
+            comments: await db.collection('comments').find({ postId: updatedComment.postId }).toArray(),
+            user: req.session.user
+        });
     } catch (err) {
         console.error('Error updating comment:', err);
         res.status(500).send('Error updating comment.');
     }
 });
+
 
 // Delete Comment Route
 router.delete('/comment/:id/delete', async (req, res) => {
@@ -66,7 +75,15 @@ router.delete('/comment/:id/delete', async (req, res) => {
         const result = await db.collection('comments').deleteOne({ _id: new ObjectId(commentId) });
 
         if (result.deletedCount > 0) {
-            return res.status(200).json({ message: 'Comment deleted successfully' });
+            // Send success message and reload post details page
+            const deletedComment = await db.collection('comments').findOne({ _id: new ObjectId(commentId) });
+
+            res.render('post-details', {
+                successMessage: 'Comment deleted successfully!',
+                post: await db.collection('posts').findOne({ _id: new ObjectId(deletedComment.postId) }),
+                comments: await db.collection('comments').find({ postId: deletedComment.postId }).toArray(),
+                user: req.session.user
+            });
         } else {
             return res.status(404).json({ error: 'Comment not found' });
         }
@@ -75,6 +92,7 @@ router.delete('/comment/:id/delete', async (req, res) => {
         return res.status(500).json({ error: 'Failed to delete comment' });
     }
 });
+
 
 // Get All Comments for a Post (Including Replies)
 router.get('/post/:postId/comments', async (req, res) => {

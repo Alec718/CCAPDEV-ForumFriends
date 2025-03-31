@@ -219,7 +219,7 @@ router.post('/post/:id/upvote', async (req, res) => {
             }
         );
 
-        res.redirect('back');
+        res.json({ votes: post.votes + voteChange });
     } catch (err) {
         console.error('Upvote failed:', err);
         res.status(500).send('Upvote error');
@@ -264,7 +264,7 @@ router.post('/post/:id/downvote', async (req, res) => {
             }
         );
 
-        res.redirect('back');
+        res.json({ votes: post.votes + voteChange });
     } catch (err) {
         console.error('Downvote failed:', err);
         res.status(500).send('Downvote error');

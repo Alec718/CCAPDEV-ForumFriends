@@ -232,21 +232,16 @@ router.post('/edit-profile/:username', async (req, res) => {
   }
 });
 
-// View All Posts by User: Only logged-in user can view their posts
+// Route to view all posts of a user
 router.get('/profile/:username/posts', async (req, res) => {
   const db = req.app.locals.db;
-  const username = req.params.username;
-
-  // Check if the user is logged in and if the logged-in user is trying to view their own posts
-  if (!req.session.user || req.session.user.username !== username) {
-    return res.status(403).send("You are not authorized to view this user's posts.");
-  }
+  const username = req.params.username; // Get the username from the route parameter
 
   try {
     const user = await db.collection('users').findOne({ username });
     if (!user) return res.status(404).send("User not found");
 
-    const posts = await db.collection('posts').find({ author: username }).toArray();
+    const posts = await db.collection('posts').find({ author: username }).toArray(); // Fetch user's posts
 
     res.render('view-posts', {
       userProfile: user,
@@ -260,23 +255,16 @@ router.get('/profile/:username/posts', async (req, res) => {
   }
 });
 
-
-
-// View All Comments by User: Only logged-in user can view their comments
+// Route to view all comments of a user
 router.get('/profile/:username/comments', async (req, res) => {
   const db = req.app.locals.db;
-  const username = req.params.username;
-
-  // Check if the user is logged in and if the logged-in user is trying to view their own comments
-  if (!req.session.user || req.session.user.username !== username) {
-    return res.status(403).send("You are not authorized to view this user's comments.");
-  }
+  const username = req.params.username; // Get the username from the route parameter
 
   try {
     const user = await db.collection('users').findOne({ username });
     if (!user) return res.status(404).send("User not found");
 
-    const comments = await db.collection('comments').find({ author: username }).toArray();
+    const comments = await db.collection('comments').find({ author: username }).toArray(); // Fetch user's comments
 
     res.render('view-comments', {
       userProfile: user,
@@ -289,8 +277,6 @@ router.get('/profile/:username/comments', async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
-
 
 
 module.exports = router;

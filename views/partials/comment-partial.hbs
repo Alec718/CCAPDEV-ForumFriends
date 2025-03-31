@@ -1,7 +1,11 @@
 {{!-- views/partials/comment-partial.hbs --}}
 <div class="nested-comment border-start ps-3 mt-2 position-relative" data-comment-id="{{_id}}">
   <div class="d-flex justify-content-between align-items-start">
-    <p class="mb-1"><strong>{{author}}</strong> on {{formatDate timestamp}}</p>
+    <p class="mb-1">
+      <strong>{{author}}</strong> on {{formatDate timestamp}}
+      {{#if edited}}<span class="text-muted small ms-1">(edited)</span>{{/if}}
+    </p>
+
     {{#if (eq author user.username)}}
       <div class="d-flex gap-2">
         <button type="button"
@@ -41,3 +45,4 @@
     {{/each}}
   </div>
 </div>
+

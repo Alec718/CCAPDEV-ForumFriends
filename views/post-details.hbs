@@ -17,6 +17,10 @@
 </header>
 
 <div class="container mt-4">
+  {{#if successMessage}}
+    <div class="alert alert-success text-center">{{successMessage}}</div>
+  {{/if}}
+
   <div class="row">
     <!-- Popular Posts -->
     <aside class="col-lg-3 d-none d-lg-block">

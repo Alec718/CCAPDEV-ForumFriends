@@ -65,6 +65,9 @@ app.engine('hbs', exphbs.engine({
     strlen: function (text) {
       return (text || '').length;
     },
+    gt: function (a, b) {
+      return a > b;
+    },
     trimContent: function (text, length) {
       if (!text) return '';
       return text.substring(0, length);

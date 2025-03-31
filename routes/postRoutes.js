@@ -225,46 +225,39 @@ router.post('/post/:id/upvote', async (req, res) => {
 
 // Downvote a post
 router.post('/post/:id/downvote', async (req, res) => {
-    const db = req.app.locals.db;
-    const postId = req.params.id;
-    const userId = req.session.user?.username;
-  
-    if (!ObjectId.isValid(postId)) return res.status(400).json({ error: "Invalid post ID" });
-  
     try {
+      const db = req.app.locals.db;
+      const postId = req.params.id;
+      const username = req.session.user?.username;
+  
       const post = await db.collection('posts').findOne({ _id: new ObjectId(postId) });
       if (!post) return res.status(404).json({ error: 'Post not found' });
   
       const voters = post.voters || {};
-      const currentVote = voters[userId];
-      let voteChange = 0;
+      const currentVote = voters[username];
   
       if (currentVote === 'downvote') {
-        delete voters[userId];
-        voteChange = 1;
+        post.votes += 1;
+        delete voters[username];
       } else if (currentVote === 'upvote') {
-        voters[userId] = 'downvote';
-        voteChange = -2;
+        post.votes -= 2;
+        voters[username] = 'downvote';
       } else {
-        voters[userId] = 'downvote';
-        voteChange = -1;
+        post.votes -= 1;
+        voters[username] = 'downvote';
       }
   
-      const updatedPost = await db.collection('posts').findOneAndUpdate(
+      await db.collection('posts').updateOne(
         { _id: new ObjectId(postId) },
-        {
-          $set: { voters: voters },
-          $inc: { votes: voteChange }
-        },
-        { returnDocument: 'after' }
+        { $set: { votes: post.votes, voters } }
       );
   
-      res.json({ votes: updatedPost.value.votes });
+      res.status(200).json({ votes: post.votes });
     } catch (err) {
       console.error('Downvote failed:', err);
       res.status(500).json({ error: 'Downvote error' });
     }
-  });
+});
   
 
 

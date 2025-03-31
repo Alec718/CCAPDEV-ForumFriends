@@ -28,9 +28,10 @@
                 class="form-control" 
                 name="username" 
                 id="username" 
-                placeholder="Enter username" 
-                value="{{rememberedUsername}}"  <!-- Pre-fill with cookie value -->
-              >
+                placeholder="Enter username"
+                value="{{rememberedUsername}}" 
+                required
+              />
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">Password</label>
@@ -39,9 +40,9 @@
                 class="form-control" 
                 name="password" 
                 id="password" 
-                placeholder="Enter password" 
-                value="{{rememberedPassword}}"  <!-- Pre-fill with cookie value -->  
-              >
+                placeholder="Enter password"
+                required
+              />
             </div>
             <div class="mb-3 form-check">
               <input 
@@ -49,8 +50,8 @@
                 class="form-check-input" 
                 name="rememberMe" 
                 id="rememberMe" 
-                {{#if rememberedUsername}}checked{{/if}}  <!-- Pre-check if cookies are set -->
-              >
+                {{#if rememberMe}}checked{{/if}}
+              />
               <label class="form-check-label" for="rememberMe">Remember me</label>
             </div>
             <div class="d-grid">

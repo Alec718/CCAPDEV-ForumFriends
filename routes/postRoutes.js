@@ -3,6 +3,7 @@ const router = express.Router();
 const { ObjectId } = require('mongodb');
 const Comment = require('../models/Comment');
 
+// Home Route
 router.get('/home', async (req, res) => {
     const db = req.app.locals.db;
     const user = req.session.user;
@@ -13,8 +14,8 @@ router.get('/home', async (req, res) => {
     }
 
     try {
-        const { search, tags, category } = req.query;
-        console.log("Filtering by Search:", search, "Tags:", tags, "Category:", category);
+        const { search, tags, category, sort } = req.query;
+        console.log("Filtering by Search:", search, "Tags:", tags, "Category:", category, "Sort:", sort);
 
         // Fetch all posts, users, and comments
         const posts = await db.collection('posts').find({}).toArray();
@@ -44,7 +45,7 @@ router.get('/home', async (req, res) => {
         // **Filtering Logic**
         let filteredPosts = posts;
 
-        //  **Apply Search Filter**
+        // **Apply Search Filter**
         if (search) {
             const searchTerm = search.toLowerCase();
             filteredPosts = filteredPosts.filter(post =>
@@ -53,7 +54,7 @@ router.get('/home', async (req, res) => {
             );
         }
 
-        //  **Apply Tags Filter**
+        // **Apply Tags Filter**
         if (tags) {
             const tagList = tags.split(',').map(tag => tag.trim().toLowerCase());
             filteredPosts = filteredPosts.filter(post =>
@@ -61,12 +62,19 @@ router.get('/home', async (req, res) => {
             );
         }
 
-        //  **Apply Category Filter**
+        // **Apply Category Filter**
         if (category) {
             filteredPosts = filteredPosts.filter(post => post.category === category);
         }
 
-        //  **Popular Posts (Top 3 by votes)**
+        // **Sorting Logic** - Newest / Oldest
+        if (sort === 'newest') {
+            filteredPosts = filteredPosts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        } else if (sort === 'oldest') {
+            filteredPosts = filteredPosts.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        }
+
+        // **Popular Posts (Top 3 by votes)**
         const popularPosts = [...posts]
             .sort((a, b) => b.votes - a.votes)
             .slice(0, 3);
@@ -77,7 +85,7 @@ router.get('/home', async (req, res) => {
             posts: filteredPosts,
             popularPosts: popularPosts,
             user: user,
-            query: { search, tags, category }
+            query: { search, tags, category, sort } // Pass 'sort' to the view as well
         });
 
     } catch (err) {
@@ -85,6 +93,7 @@ router.get('/home', async (req, res) => {
         res.status(500).send('Error loading home page.');
     }
 });
+
 
 
 // Post Details Route

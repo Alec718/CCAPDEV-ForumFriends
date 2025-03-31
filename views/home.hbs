@@ -112,6 +112,12 @@
             <option value="Design" {{#if (eq query.category "Design")}}selected{{/if}}>Design</option>
           </select>
 
+          <label class="form-label mt-2">Sort By</label>
+          <select class="form-select mb-3" name="sort">
+            <option value="newest" {{#if (eq query.sort "newest")}}selected{{/if}}>Newest First</option>
+            <option value="oldest" {{#if (eq query.sort "oldest")}}selected{{/if}}>Oldest First</option>
+          </select>
+
           <button type="submit" class="btn btn-primary mt-3 w-100">Apply Filters</button>
         </form>
       </div>

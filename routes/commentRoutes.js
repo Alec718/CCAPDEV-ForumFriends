@@ -45,13 +45,11 @@ router.post('/comment/:id/edit', async (req, res) => {
     const { text } = req.body;
 
     try {
-        // Update the comment and add the editedAt field
         await db.collection('comments').updateOne(
             { _id: new ObjectId(commentId) },
-            { $set: { text: text, editedAt: new Date() } }
+            { $set: { text: text } }
         );
 
-        // Send success message
         res.status(200).json({ message: 'Comment updated successfully.' });
     } catch (err) {
         console.error('Error updating comment:', err);
@@ -59,15 +57,21 @@ router.post('/comment/:id/edit', async (req, res) => {
     }
 });
 
-
 // Delete Comment Route
 router.delete('/comment/:id/delete', async (req, res) => {
     const db = req.app.locals.db;
     const commentId = req.params.id;
 
     try {
+        // Ensure the commentId is valid
+        if (!ObjectId.isValid(commentId)) {
+            return res.status(400).json({ error: 'Invalid comment ID' });
+        }
+
+        // Delete the comment
         const result = await db.collection('comments').deleteOne({ _id: new ObjectId(commentId) });
 
+        // Check if comment was deleted
         if (result.deletedCount > 0) {
             return res.status(200).json({ message: 'Comment deleted successfully' });
         } else {
@@ -78,6 +82,7 @@ router.delete('/comment/:id/delete', async (req, res) => {
         return res.status(500).json({ error: 'Failed to delete comment' });
     }
 });
+
 
 // Get All Comments for a Post (Including Replies)
 router.get('/post/:postId/comments', async (req, res) => {

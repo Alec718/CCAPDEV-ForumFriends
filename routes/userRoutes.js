@@ -2,21 +2,10 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
-// Login Page
-router.get('/login', (req, res) => {
-  const rememberedUsername = req.cookies.rememberedUsername || '';
-  const rememberedPassword = req.cookies.rememberedPassword || '';
-  res.render('login', { 
-    title: 'Forum Friends - Login', 
-    rememberedUsername, 
-    rememberedPassword 
-  });
-});
-
 // Login Route (POST)
 router.post('/login', async (req, res) => {
   const db = req.app.locals.db;
-  const { username, password } = req.body;
+  const { username, password, rememberMe } = req.body; // Get rememberMe from the form
 
   try {
     const user = await db.collection('users').findOne({ username });
@@ -51,6 +40,13 @@ router.post('/login', async (req, res) => {
     };
 
     console.log("✅ Login successful for:", username);
+
+    // If "remember me" is checked, set cookies for username and password
+    if (rememberMe) {
+      res.cookie('rememberedUsername', username, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true }); // 30 days
+      res.cookie('rememberedPassword', password, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true }); // 30 days
+    }
+
     res.redirect('/home');
 
   } catch (err) {
@@ -61,6 +57,7 @@ router.post('/login', async (req, res) => {
     });
   }
 });
+
 
 
 // Registration Page
@@ -129,10 +126,17 @@ router.post('/register', async (req, res) => {
 
 // Logout Route
 router.get('/logout', (req, res) => {
+  // Destroy the session
   req.session.destroy(err => {
+    // Clear the cookies associated with the session
+    res.clearCookie('rememberedUsername');
+    res.clearCookie('rememberedPassword');
+    
+    // Redirect to login page
     res.redirect('/login');
   });
 });
+
 
 // Profile Route
 router.get('/profile/:username', async (req, res) => {

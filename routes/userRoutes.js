@@ -1,7 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
-const { isAuthenticated } = require('../middleware/auth');
 
 // Login Page
 router.get('/login', (req, res) => {
@@ -234,12 +233,12 @@ router.post('/edit-profile/:username', async (req, res) => {
 });
 
 // View All Posts by User: Only logged-in user can view their posts
-router.get('/profile/:username/posts', isAuthenticated, async (req, res) => {
+router.get('/profile/:username/posts', async (req, res) => {
   const db = req.app.locals.db;
   const username = req.params.username;
 
-  // Allow only logged-in user to see their posts
-  if (req.session.user.username !== username) {
+  // Check if the user is logged in and if the logged-in user is trying to view their own posts
+  if (!req.session.user || req.session.user.username !== username) {
     return res.status(403).send("You are not authorized to view this user's posts.");
   }
 
@@ -264,12 +263,12 @@ router.get('/profile/:username/posts', isAuthenticated, async (req, res) => {
 
 
 // View All Comments by User: Only logged-in user can view their comments
-router.get('/profile/:username/comments', isAuthenticated, async (req, res) => {
+router.get('/profile/:username/comments', async (req, res) => {
   const db = req.app.locals.db;
   const username = req.params.username;
 
-  // Allow only logged-in user to see their comments
-  if (req.session.user.username !== username) {
+  // Check if the user is logged in and if the logged-in user is trying to view their own comments
+  if (!req.session.user || req.session.user.username !== username) {
     return res.status(403).send("You are not authorized to view this user's comments.");
   }
 
@@ -290,6 +289,7 @@ router.get('/profile/:username/comments', isAuthenticated, async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 
 

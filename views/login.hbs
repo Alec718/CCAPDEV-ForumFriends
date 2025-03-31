@@ -29,7 +29,7 @@
                 name="username" 
                 id="username" 
                 placeholder="Enter username"
-                value="{{rememberedUsername}}" 
+                value="{{rememberedUsername}}"  <!-- Pre-fill with the remembered username -->
                 required
               />
             </div>
@@ -50,7 +50,7 @@
                 class="form-check-input" 
                 name="rememberMe" 
                 id="rememberMe" 
-                {{#if rememberMe}}checked{{/if}}
+                {{#if rememberedUsername}}checked{{/if}}  <!-- Check the checkbox if username is remembered -->
               />
               <label class="form-check-label" for="rememberMe">Remember me</label>
             </div>

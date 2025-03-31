@@ -2,6 +2,17 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
+// Login Page
+router.get('/login', (req, res) => {
+  const rememberedUsername = req.cookies.rememberedUsername || '';
+  const rememberedPassword = req.cookies.rememberedPassword || '';
+  res.render('login', { 
+    title: 'Forum Friends - Login', 
+    rememberedUsername, 
+    rememberedPassword 
+  });
+});
+
 // Login Route (POST)
 router.post('/login', async (req, res) => {
   const db = req.app.locals.db;
@@ -57,7 +68,6 @@ router.post('/login', async (req, res) => {
     });
   }
 });
-
 
 
 // Registration Page

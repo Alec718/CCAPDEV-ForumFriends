@@ -354,35 +354,43 @@
     $('#edit-comment-submit-btn').prop('disabled', true).text('Saving...');
   });
 
-  // Post voting with login check and real-time update
-  $(document).on('click', '.post-upvote-btn, .post-downvote-btn', function () {
-    const isLoggedIn = {{#if user}}true{{else}}false{{/if}};
-    const isUpvote = $(this).hasClass('post-upvote-btn');
-    const postId = $(this).data('post-id');
+  // Post voting with login check and proper JSON handling
+$(document).on('click', '.post-upvote-btn, .post-downvote-btn', function () {
+  const isLoggedIn = {{#if user}}true{{else}}false{{/if}};
+  const isUpvote = $(this).hasClass('post-upvote-btn');
+  const $btn = $(this);
+  const postId = $btn.data('post-id');
 
-    if (!isLoggedIn) {
-      alert('You must be logged in to vote.');
-      window.location.href = '/login';
-      return;
-    }
+  if (!isLoggedIn) {
+    alert('You must be logged in to vote.');
+    window.location.href = '/login';
+    return;
+  }
 
-    $.ajax({
-      url: `/post/${postId}/${isUpvote ? 'upvote' : 'downvote'}`,
-      method: 'POST',
-      contentType: 'application/json',
-      success: function (response) {
-        if (response && response.votes !== undefined) {
-          $('#post-vote-count').text(response.votes);
-        } else {
-          alert('Vote updated, but no response data received.');
-        }
-      },
-      error: function (xhr) {
-        const err = xhr.responseJSON?.error || xhr.responseText;
-        alert('Error voting on post: ' + err);
+  $.ajax({
+    url: `/post/${postId}/${isUpvote ? 'upvote' : 'downvote'}`,
+    method: 'POST',
+    contentType: 'application/json',
+    success: function (response) {
+      if (response && typeof response.votes === 'number') {
+        $('#post-vote-count').text(response.votes);
+      } else {
+        console.warn("Unexpected response:", response);
       }
-    });
+    },
+    error: function (xhr) {
+      let errorMessage = 'An unexpected error occurred.';
+      try {
+        const response = JSON.parse(xhr.responseText);
+        errorMessage = response.error || errorMessage;
+      } catch (err) {
+        errorMessage = xhr.responseText || errorMessage;
+      }
+      alert('Error voting on post: ' + errorMessage);
+    }
   });
+});
+
 
 
 

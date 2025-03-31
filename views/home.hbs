@@ -62,7 +62,15 @@
                 Posted by <a href="/profile/{{this.author}}" class="text-decoration-none">{{this.author}}</a> on {{this.timestamp}}
               </p>
 
-              <p class="mb-0">{{this.content}}</p>
+              <p class="mb-1">
+                {{#if (gt (strlen this.content) 300)}}
+                  {{trimContent this.content 300}}...
+                  <a href="/post/{{_id}}" class="text-decoration-none">Read more</a>
+                {{else}}
+                  {{this.content}}
+                {{/if}}
+              </p>
+
             </div>
             
           </div>

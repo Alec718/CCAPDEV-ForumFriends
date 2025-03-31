@@ -26,19 +26,17 @@ app.use(methodOverride('_method'));
 const uri = process.env.MONGODB_URI;
 
 // Initialize MongoClient
-const client = new MongoClient(process.env.MONGODB_URI, {
+const client = new MongoClient(uri, {
   serverApi: { version: '1' }
 });
 
-
-
-//  Session middleware — must be BEFORE any route that uses req.session
+// Session middleware — must be BEFORE any route that uses req.session
 app.use(session({
   secret: 'forum-friends-secret',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: uri, // using env variable for safety
+    mongoUrl: uri,
     dbName: 'forumdb'
   }),
   cookie: {
@@ -46,10 +44,10 @@ app.use(session({
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // only true on Render
     sameSite: 'lax'
-  }  
+  }
 }));
 
-// Handlebars setup
+// Handlebars setup with extra helpers
 app.engine('hbs', exphbs.engine({
   extname: '.hbs',
   defaultLayout: 'main',
@@ -63,6 +61,13 @@ app.engine('hbs', exphbs.engine({
     },
     formatDate: function (timestamp) {
       return new Date(timestamp).toLocaleString();
+    },
+    strlen: function (text) {
+      return (text || '').length;
+    },
+    trimContent: function (text, length) {
+      if (!text) return '';
+      return text.substring(0, length);
     }
   }
 }));

@@ -45,17 +45,20 @@ router.post('/comment/:id/edit', async (req, res) => {
     const { text } = req.body;
 
     try {
+        // Update the comment with the new text and add the editedAt field
         await db.collection('comments').updateOne(
             { _id: new ObjectId(commentId) },
-            { $set: { text: text } }
+            { $set: { text: text, editedAt: new Date() } } // ← Add this line
         );
 
-        res.status(200).json({ message: 'Comment updated successfully.' });
+        // After editing the comment, render the post-details page with the updated comment list
+        res.redirect(`/post/${req.body.postId}`); // Redirect to the same post page to see the updated comment
     } catch (err) {
         console.error('Error updating comment:', err);
         res.status(500).send('Error updating comment.');
     }
 });
+
 
 // Delete Comment Route
 router.delete('/comment/:id/delete', async (req, res) => {

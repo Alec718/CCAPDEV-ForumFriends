@@ -268,7 +268,6 @@ router.post('/post/:id/downvote', async (req, res) => {
 });
   
 
-
 // Update Post Route
 router.post('/post/:postId/edit', async (req, res) => {
     const db = req.app.locals.db;
@@ -276,6 +275,7 @@ router.post('/post/:postId/edit', async (req, res) => {
     const { postTitle, postContent, postTags, postImage } = req.body;
 
     try {
+        // Update the post with the new content and add the editedAt field
         await db.collection('posts').updateOne(
             { _id: new ObjectId(postId) },
             { 
@@ -283,17 +283,20 @@ router.post('/post/:postId/edit', async (req, res) => {
                     title: postTitle,
                     content: postContent,
                     tags: postTags ? postTags.split(',').map(tag => tag.trim()) : [],
-                    image: postImage
+                    image: postImage,
+                    editedAt: new Date() // ← Add this line
                 }
             }
         );
 
-        res.redirect(`/post/${postId}`);
+        // After updating, redirect back to the post details page to reflect the changes
+        res.redirect(`/post/${postId}`); // Redirect to the same post page to show updated details
     } catch (err) {
         console.error("Error updating post:", err);
         res.status(500).send("Error updating post.");
     }
 });
+
 
 // Delete Post Route
 router.post('/post/:postId/delete', async (req, res) => {

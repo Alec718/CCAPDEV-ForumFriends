@@ -3,7 +3,7 @@
   <div class="d-flex justify-content-between align-items-start">
     <p class="mb-1">
       <strong>{{author}}</strong> on {{formatDate timestamp}}
-      {{#if edited}}<span class="text-muted small ms-1">(edited)</span>{{/if}}
+      {{#if editedAt}}<span class="text-muted small ms-1">(edited)</span>{{/if}}
     </p>
 
     {{#if (eq author user.username)}}

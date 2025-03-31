@@ -3,7 +3,6 @@ const router = express.Router();
 const { ObjectId } = require('mongodb');
 const Comment = require('../models/Comment');
 
-// Home Route
 router.get('/home', async (req, res) => {
     const db = req.app.locals.db;
     const user = req.session.user;
@@ -14,15 +13,15 @@ router.get('/home', async (req, res) => {
     }
 
     try {
-        const { tags, category } = req.query;
-        console.log("Filtering by Tags:", tags, "Category:", category);
+        const { search, tags, category } = req.query;
+        console.log("Filtering by Search:", search, "Tags:", tags, "Category:", category);
 
-        // Fetch posts, users, and all comments
+        // Fetch all posts, users, and comments
         const posts = await db.collection('posts').find({}).toArray();
         const users = await db.collection('users').find({}).toArray();
         const comments = await db.collection('comments').find({}).toArray();
 
-        // Create a dictionary of profile pictures for quick lookup
+        // Profile pictures lookup
         const profilePictures = {};
         users.forEach(user => {
             profilePictures[user.username] = user.profilePicture || "/images/blank-profile-picture.png";
@@ -42,9 +41,19 @@ router.get('/home', async (req, res) => {
             post.commentCount = commentCounts[post._id.toString()] || 0;
         });
 
-        // Filter posts by tags and category
+        // **Filtering Logic**
         let filteredPosts = posts;
 
+        //  **Apply Search Filter**
+        if (search) {
+            const searchTerm = search.toLowerCase();
+            filteredPosts = filteredPosts.filter(post =>
+                post.title.toLowerCase().includes(searchTerm) || 
+                post.content.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        //  **Apply Tags Filter**
         if (tags) {
             const tagList = tags.split(',').map(tag => tag.trim().toLowerCase());
             filteredPosts = filteredPosts.filter(post =>
@@ -52,22 +61,23 @@ router.get('/home', async (req, res) => {
             );
         }
 
+        //  **Apply Category Filter**
         if (category) {
             filteredPosts = filteredPosts.filter(post => post.category === category);
         }
 
-        // Popular posts (top 3 by votes)
+        //  **Popular Posts (Top 3 by votes)**
         const popularPosts = [...posts]
             .sort((a, b) => b.votes - a.votes)
             .slice(0, 3);
 
-        // Render with filters retained
+        // Render Home Page with Filters Retained
         res.render('home', {
             title: 'Forum Friends - Home',
             posts: filteredPosts,
             popularPosts: popularPosts,
             user: user,
-            query: { tags, category }
+            query: { search, tags, category }
         });
 
     } catch (err) {
@@ -75,8 +85,6 @@ router.get('/home', async (req, res) => {
         res.status(500).send('Error loading home page.');
     }
 });
-
-
 
 
 // Post Details Route

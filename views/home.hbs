@@ -88,8 +88,17 @@
       <div class="filter-section">
         <h5>Filter Posts</h5>
         <form method="GET" action="/home">
+          
+          <!-- Search Bar -->
           <input type="text"
                 class="form-control search-bar"
+                name="search"
+                placeholder="Search posts..."
+                value="{{query.search}}">  <!-- Retains search term -->
+
+          <label class="form-label mt-2">Enter Tags</label>
+          <input type="text"
+                class="form-control"
                 name="tags"
                 placeholder="Enter tags (comma-separated)"
                 value="{{query.tags}}">
@@ -104,6 +113,7 @@
 
           <button type="submit" class="btn btn-primary mt-3 w-100">Apply Filters</button>
         </form>
+      </div>
     </aside>
   </div>
 </main>

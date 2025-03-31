@@ -5,7 +5,7 @@ const router = express.Router();
 // Login Page
 router.get('/login', (req, res) => {
   const rememberedUsername = req.cookies.rememberedUsername || '';
-  const rememberedPassword = req.cookies.rememberedPassword || '';  // It's safer to avoid pre-filling passwords, but if needed, we'll do it here
+  const rememberedPassword = req.cookies.rememberedPassword || '';
   res.render('login', { 
     title: 'Forum Friends - Login', 
     rememberedUsername, 
@@ -16,10 +16,9 @@ router.get('/login', (req, res) => {
 // Login Route (POST)
 router.post('/login', async (req, res) => {
   const db = req.app.locals.db;
-  const { username, password, rememberMe } = req.body; // Get rememberMe from the form
+  const { username, password } = req.body;
 
   try {
-    // Check if the user exists in the database
     const user = await db.collection('users').findOne({ username });
 
     if (!user) {
@@ -32,7 +31,6 @@ router.post('/login', async (req, res) => {
 
     console.log("✅ User found:", user);
 
-    // Compare password entered with stored hashed password
     const isMatch = await bcrypt.compare(password, user.password);
     console.log("🔐 Password entered:", password);
     console.log("🔐 Password in DB:", user.password);
@@ -46,7 +44,6 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Set user session if authentication is successful
     req.session.user = {
       id: user._id,
       username: user.username,
@@ -54,14 +51,6 @@ router.post('/login', async (req, res) => {
     };
 
     console.log("✅ Login successful for:", username);
-
-    // If "Remember Me" is checked, set cookies for username and password
-    if (rememberMe) {
-      res.cookie('rememberedUsername', username, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true }); // 30 days
-      res.cookie('rememberedPassword', password, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true }); // 30 days
-    }
-
-    // Redirect to home after successful login
     res.redirect('/home');
 
   } catch (err) {
@@ -72,7 +61,6 @@ router.post('/login', async (req, res) => {
     });
   }
 });
-
 
 
 // Registration Page
@@ -141,17 +129,10 @@ router.post('/register', async (req, res) => {
 
 // Logout Route
 router.get('/logout', (req, res) => {
-  // Destroy the session
   req.session.destroy(err => {
-    // Clear the cookies associated with the session
-    res.clearCookie('rememberedUsername');
-    res.clearCookie('rememberedPassword');
-    
-    // Redirect to login page
     res.redirect('/login');
   });
 });
-
 
 // Profile Route
 router.get('/profile/:username', async (req, res) => {

@@ -29,9 +29,8 @@
                 name="username" 
                 id="username" 
                 placeholder="Enter username"
-                value="{{rememberedUsername}}"  <!-- Pre-fill with the remembered username -->
-                required
-              />
+                value="{{rememberedUsername}}"
+                required/>
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">Password</label>
@@ -41,8 +40,7 @@
                 name="password" 
                 id="password" 
                 placeholder="Enter password"
-                required
-              />
+                required/>
             </div>
             <div class="mb-3 form-check">
               <input 
@@ -50,8 +48,7 @@
                 class="form-check-input" 
                 name="rememberMe" 
                 id="rememberMe" 
-                {{#if rememberedUsername}}checked{{/if}}  <!-- Check the checkbox if username is remembered -->
-              />
+                {{#if rememberedUsername}}checked{{/if}}/>
               <label class="form-check-label" for="rememberMe">Remember me</label>
             </div>
             <div class="d-grid">

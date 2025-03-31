@@ -354,7 +354,7 @@
     $('#edit-comment-submit-btn').prop('disabled', true).text('Saving...');
   });
 
-  // Post voting with login check and live update
+  // Post voting with login check and real-time update
   $(document).on('click', '.post-upvote-btn, .post-downvote-btn', function () {
     const isLoggedIn = {{#if user}}true{{else}}false{{/if}};
     const isUpvote = $(this).hasClass('post-upvote-btn');
@@ -369,14 +369,21 @@
     $.ajax({
       url: `/post/${postId}/${isUpvote ? 'upvote' : 'downvote'}`,
       method: 'POST',
+      contentType: 'application/json',
       success: function (response) {
-        $('#post-vote-count').text(response.votes);
+        if (response && response.votes !== undefined) {
+          $('#post-vote-count').text(response.votes);
+        } else {
+          alert('Vote updated, but no response data received.');
+        }
       },
       error: function (xhr) {
-        alert('Error voting on post: ' + xhr.responseText);
+        const err = xhr.responseJSON?.error || xhr.responseText;
+        alert('Error voting on post: ' + err);
       }
     });
   });
+
 
 
 </script>

@@ -158,7 +158,7 @@ router.get('/profile/:username', async (req, res) => {
   }
 });
 
-// Edit Profile Page (GET)
+// Edit Profile Page
 router.get('/edit-profile', async (req, res) => {
   const db = req.app.locals.db;
   const username = req.session.user?.username;
@@ -179,7 +179,7 @@ router.get('/edit-profile', async (req, res) => {
   }
 });
 
-// Edit Profile Route (POST)
+// Edit Profile Route 
 router.post('/edit-profile/:username', async (req, res) => {
   const db = req.app.locals.db;
   const oldUsername = req.params.username;

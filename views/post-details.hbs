@@ -90,14 +90,19 @@
 
         <!-- Post Voting -->
         <div class="post-vote d-flex align-items-center gap-2 mb-3">
-          <form action="/post/{{post._id}}/upvote" method="POST">
-            <button type="submit" class="vote-button upvote {{#if (eq post.voters.[user.id] "upvote")}}active{{/if}}">↑</button>
-          </form>
-          <span class="vote-count fw-bold">{{post.votes}}</span>
-          <form action="/post/{{post._id}}/downvote" method="POST">
-            <button type="submit" class="vote-button downvote {{#if (eq post.voters.[user.id] "downvote")}}active{{/if}}">↓</button>
-          </form>
+          <button 
+            class="vote-button upvote post-upvote-btn {{#if (eq post.voters.[user.id] "upvote")}}active{{/if}}"
+            data-post-id="{{post._id}}">
+            ↑
+          </button>
+          <span id="post-vote-count" class="vote-count fw-bold">{{post.votes}}</span>
+          <button 
+            class="vote-button downvote post-downvote-btn {{#if (eq post.voters.[user.id] "downvote")}}active{{/if}}"
+            data-post-id="{{post._id}}">
+            ↓
+          </button>
         </div>
+
 
 
         <!-- Comments -->
@@ -113,14 +118,22 @@
         <!-- Add Comment -->
         <div class="comment-box mt-4">
           <h5>Add a Comment</h5>
-          <form id="comment-form" action="/post/{{post._id}}/comment" method="POST">
-            <div class="mb-3">
-              <textarea class="form-control" name="commentText" rows="3" placeholder="Write your comment here..." required></textarea>
+
+          {{#if user}}
+            <form id="comment-form" action="/post/{{post._id}}/comment" method="POST">
+              <div class="mb-3">
+                <textarea class="form-control" name="commentText" rows="3" placeholder="Write your comment here..." required></textarea>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button type="submit" id="comment-btn" class="btn btn-primary">Post Comment</button>
+              </div>
+            </form>
+          {{else}}
+            <div class="alert alert-warning d-flex justify-content-between align-items-center">
+              <span>You must <a href="/login" class="text-decoration-none fw-bold ms-1 me-1">log in</a> to post a comment.</span>
+              <a href="/login" class="btn btn-sm btn-outline-primary">Login</a>
             </div>
-            <div class="d-flex justify-content-end">
-              <button type="submit" id="comment-btn" class="btn btn-primary">Post Comment</button>
-            </div>
-          </form>
+          {{/if}}
         </div>
       </div>
     </section>
@@ -184,6 +197,10 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
   $(document).ready(function () {
     $('#openEditPostBtn').on('click', function () {
@@ -203,8 +220,20 @@
       $(this).closest('.reply-form').hide();
     });
 
+    //  Reply with login check
     $(document).on('click', '.submit-reply', function () {
-      const container = $(this).closest('.comment-item, .nested-comment');
+      const isLoggedIn = {{#if user}}true{{else}}false{{/if}};
+      const $btn = $(this);
+
+      if (!isLoggedIn) {
+        alert('You must be logged in to reply.');
+        window.location.href = '/login';
+        return;
+      }
+
+      $btn.prop('disabled', true).text('Posting...');
+
+      const container = $btn.closest('.comment-item, .nested-comment');
       const replyText = container.find('.reply-text').val();
       const commentId = container.data('comment-id');
       const postId = $('#postId').val();
@@ -219,16 +248,24 @@
         },
         error: function (xhr) {
           alert('Error adding reply: ' + xhr.responseText);
+          $btn.prop('disabled', false).text('Submit');
         }
       });
     });
 
-    // Voting (FIXED)
+    // Comment voting with login check
     $(document).on('click', '.upvote-btn, .downvote-btn', function () {
+      const isLoggedIn = {{#if user}}true{{else}}false{{/if}};
       const isUpvote = $(this).hasClass('upvote-btn');
       const $button = $(this);
       const container = $button.closest('.nested-comment');
       const commentId = container.data('comment-id');
+
+      if (!isLoggedIn) {
+        alert('You must be logged in to vote.');
+        window.location.href = '/login';
+        return;
+      }
 
       $.ajax({
         url: `/comment/${commentId}/${isUpvote ? 'upvote' : 'downvote'}`,
@@ -243,7 +280,6 @@
         }
       });
     });
-
 
     // Edit Comment Modal logic
     $('#editCommentModal').on('show.bs.modal', function (event) {
@@ -277,51 +313,72 @@
   });
 
   // Delete comment/reply
-$(document).on('click', '.delete-btn', function () {
-  const container = $(this).closest('.nested-comment');
-  const commentId = container.data('comment-id');
+  $(document).on('click', '.delete-btn', function () {
+    const container = $(this).closest('.nested-comment');
+    const commentId = container.data('comment-id');
 
-  if (!commentId) {
-    alert("Error: Comment ID not found.");
+    if (!commentId) {
+      alert("Error: Comment ID not found.");
+      return;
+    }
+
+    if (confirm('Are you sure you want to delete this comment?')) {
+      $.ajax({
+        url: `/comment/${commentId}/delete`,
+        method: 'DELETE',
+        success: function () {
+          container.remove();
+        },
+        error: function (xhr) {
+          alert('Error deleting comment: ' + xhr.responseText);
+        }
+      });
+    }
+  });
+
+  // Prevent multiple comment submissions
+  document.addEventListener('DOMContentLoaded', () => {
+    const commentForm = document.getElementById('comment-form');
+    const commentBtn = document.getElementById('comment-btn');
+
+    if (commentForm && commentBtn) {
+      commentForm.addEventListener('submit', () => {
+        commentBtn.disabled = true;
+        commentBtn.innerText = 'Posting...';
+      });
+    }
+  });
+
+  // Disable edit comment submit button once clicked
+  $('#editCommentForm').on('submit', function (e) {
+    $('#edit-comment-submit-btn').prop('disabled', true).text('Saving...');
+  });
+
+  // Post voting with login check
+$(document).on('click', '.post-upvote-btn, .post-downvote-btn', function () {
+  const isLoggedIn = {{#if user}}true{{else}}false{{/if}};
+  const isUpvote = $(this).hasClass('post-upvote-btn');
+  const postId = $(this).data('post-id');
+
+  if (!isLoggedIn) {
+    alert('You must be logged in to vote.');
+    window.location.href = '/login';
     return;
   }
 
-  if (confirm('Are you sure you want to delete this comment?')) {
-    $.ajax({
-      url: `/comment/${commentId}/delete`,
-      method: 'DELETE',
-      success: function () {
-        container.remove();
-      },
-      error: function (xhr) {
-        alert('Error deleting comment: ' + xhr.responseText);
-      }
-    });
-  }
-});
-
-// Prevent multiple comment submissions
-document.addEventListener('DOMContentLoaded', () => {
-  const commentForm = document.getElementById('comment-form');
-  const commentBtn = document.getElementById('comment-btn');
-
-  if (commentForm && commentBtn) {
-    commentForm.addEventListener('submit', () => {
-      commentBtn.disabled = true;
-      commentBtn.innerText = 'Posting...';
-    });
-  }
-});
-
-// Disable reply buttons on click to prevent double submissions
-$(document).on('click', '.submit-reply', function () {
-  const $btn = $(this);
-  $btn.prop('disabled', true).text('Posting...');
-});
-
-// Disable edit comment submit button once clicked
-$('#editCommentForm').on('submit', function (e) {
-  $('#edit-comment-submit-btn').prop('disabled', true).text('Saving...');
+  $.ajax({
+    url: `/post/${postId}/${isUpvote ? 'upvote' : 'downvote'}`,
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({ userId: '{{user.username}}' }),
+    success: function (response) {
+      $('#post-vote-count').text(response.votes);
+    },
+    error: function (xhr) {
+      alert('Error voting on post: ' + xhr.responseText);
+    }
+  });
 });
 
 </script>
+

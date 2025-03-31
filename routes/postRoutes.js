@@ -3,7 +3,7 @@ const router = express.Router();
 const { ObjectId } = require('mongodb');
 const Comment = require('../models/Comment');
 
-// Home Route (MODIFY)
+// Home Route
 router.get('/home', async (req, res) => {
     const db = req.app.locals.db;
     const user = req.session.user;
@@ -79,7 +79,7 @@ router.get('/home', async (req, res) => {
 
 
 
-// Post Details Route (MODIFY)
+// Post Details Route
 router.get('/post/:postId', async (req, res) => {
     const db = req.app.locals.db;
     const postId = req.params.postId;
@@ -124,7 +124,7 @@ router.get('/post/:postId', async (req, res) => {
             post: post,
             comments: nestedComments,
             user: req.session.user,
-            popularPosts: popularPosts // ✅ Pass popular posts to view
+            popularPosts: popularPosts //  Pass popular posts to view
         });
     } catch (err) {
         console.error("Error fetching post:", err);
@@ -133,7 +133,7 @@ router.get('/post/:postId', async (req, res) => {
 });
 
 
-// Create Post Page (GET)
+// Create Post Page
 router.get('/create-post', (req, res) => {
     const user = req.session.user;
     if (!user) {
@@ -142,7 +142,7 @@ router.get('/create-post', (req, res) => {
     res.render('create-post', { title: 'Create Post', user: user });
 });
 
-// Create Post Route (POST)
+// Create Post Route
 router.post('/create-post', async (req, res) => {
     const db = req.app.locals.db;
     const { postTitle, postContent, postTags, postCategory } = req.body;

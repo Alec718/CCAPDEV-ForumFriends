@@ -153,18 +153,12 @@ router.get('/logout', (req, res) => {
 });
 
 
-// Profile Route - GET
+// Profile Route
 router.get('/profile/:username', async (req, res) => {
   const db = req.app.locals.db;
   const username = req.params.username;
-  const sessionUser = req.session.user; // Get session user
 
   try {
-    // Ensure the user is logged in and the session username matches the requested profile username
-    if (!sessionUser || sessionUser.username !== username) {
-      return res.redirect('/login'); // Redirect to login if the user is not logged in or doesn't match the session username
-    }
-
     const user = await db.collection('users').findOne({ username });
     if (!user) return res.status(404).send("User not found.");
 
@@ -182,7 +176,6 @@ router.get('/profile/:username', async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
 
 // Edit Profile Page
 router.get('/edit-profile', async (req, res) => {

@@ -354,31 +354,30 @@
     $('#edit-comment-submit-btn').prop('disabled', true).text('Saving...');
   });
 
-  // Post voting with login check
-$(document).on('click', '.post-upvote-btn, .post-downvote-btn', function () {
-  const isLoggedIn = {{#if user}}true{{else}}false{{/if}};
-  const isUpvote = $(this).hasClass('post-upvote-btn');
-  const postId = $(this).data('post-id');
+  // Post voting with login check and live update
+  $(document).on('click', '.post-upvote-btn, .post-downvote-btn', function () {
+    const isLoggedIn = {{#if user}}true{{else}}false{{/if}};
+    const isUpvote = $(this).hasClass('post-upvote-btn');
+    const postId = $(this).data('post-id');
 
-  if (!isLoggedIn) {
-    alert('You must be logged in to vote.');
-    window.location.href = '/login';
-    return;
-  }
-
-  $.ajax({
-    url: `/post/${postId}/${isUpvote ? 'upvote' : 'downvote'}`,
-    method: 'POST',
-    contentType: 'application/json',
-    data: JSON.stringify({ userId: '{{user.username}}' }),
-    success: function (response) {
-      $('#post-vote-count').text(response.votes);
-    },
-    error: function (xhr) {
-      alert('Error voting on post: ' + xhr.responseText);
+    if (!isLoggedIn) {
+      alert('You must be logged in to vote.');
+      window.location.href = '/login';
+      return;
     }
+
+    $.ajax({
+      url: `/post/${postId}/${isUpvote ? 'upvote' : 'downvote'}`,
+      method: 'POST',
+      success: function (response) {
+        $('#post-vote-count').text(response.votes);
+      },
+      error: function (xhr) {
+        alert('Error voting on post: ' + xhr.responseText);
+      }
+    });
   });
-});
+
 
 </script>
 

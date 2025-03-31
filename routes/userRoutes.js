@@ -16,7 +16,7 @@ router.get('/login', (req, res) => {
 // Login Route (POST)
 router.post('/login', async (req, res) => {
   const db = req.app.locals.db;
-  const { username, password } = req.body;
+  const { username, password, rememberMe } = req.body;  // Added rememberMe to check the checkbox
 
   try {
     const user = await db.collection('users').findOne({ username });
@@ -44,11 +44,21 @@ router.post('/login', async (req, res) => {
       });
     }
 
+    // Setting session data after login
     req.session.user = {
       id: user._id,
       username: user.username,
       profilePicture: user.profilePicture,
     };
+
+    // Implementing Remember Me functionality
+    if (rememberMe) {
+      res.cookie('rememberedUsername', username, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true }); // Save username in cookie for 30 days
+      res.cookie('rememberedPassword', password, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true }); // Save password in cookie for 30 days
+    } else {
+      res.clearCookie('rememberedUsername');  // Clear username cookie if "Remember Me" is unchecked
+      res.clearCookie('rememberedPassword');  // Clear password cookie if "Remember Me" is unchecked
+    }
 
     console.log("✅ Login successful for:", username);
     res.redirect('/home');
@@ -61,6 +71,7 @@ router.post('/login', async (req, res) => {
     });
   }
 });
+
 
 
 // Registration Page

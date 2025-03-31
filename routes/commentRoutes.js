@@ -45,17 +45,27 @@ router.post('/comment/:id/edit', async (req, res) => {
     const { text } = req.body;
 
     try {
+        // Ensure the commentId is valid
+        if (!ObjectId.isValid(commentId)) {
+            return res.status(400).json({ error: 'Invalid comment ID' });
+        }
+
+        // Update the comment and set the editedAt field
         await db.collection('comments').updateOne(
             { _id: new ObjectId(commentId) },
-            { $set: { text: text } }
+            { 
+                $set: { text: text, editedAt: new Date() } // Add the editedAt field
+            }
         );
 
+        // Send success response
         res.status(200).json({ message: 'Comment updated successfully.' });
     } catch (err) {
         console.error('Error updating comment:', err);
         res.status(500).send('Error updating comment.');
     }
 });
+
 
 // Delete Comment Route
 router.delete('/comment/:id/delete', async (req, res) => {

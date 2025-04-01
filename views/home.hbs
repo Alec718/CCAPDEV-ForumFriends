@@ -88,52 +88,51 @@
       {{/if}}
     </section>
 
-
     <!-- Right Sidebar: Filters -->
-      <aside class="col-lg-3">
-        <div class="filter-section">
-          <h5>Search Posts</h5>
-          <form method="GET" action="/home">
-            
-            <!-- Search Bar -->
-            <input type="text"
-                  class="form-control search-bar"
-                  name="search"
-                  placeholder="Search posts..."
-                  value="{{query.search}}">  <!-- Retains search term -->
-            <br>
+    <aside class="col-lg-3">
+      <div class="filter-section">
+        <h5>Search Posts</h5>
+        <form method="GET" action="/home">
+          
+          <!-- Search Bar -->
+          <input type="text"
+                class="form-control search-bar"
+                name="search"
+                placeholder="Search posts..."
+                value="{{query.search}}">  <!-- Retains search term -->
+          <br>
 
-            <h5>Filter Posts</h5>
+          <h5>Filter Posts</h5>
 
-            <!-- Tags Input -->
-            <label class="form-label mt-2">Enter Tags</label>
-            <input type="text"
-                  class="form-control"
-                  name="tags"
-                  placeholder="Enter tags (comma-separated)"
-                  value="{{query.tags}}">
+          <!-- Tags Input -->
+          <label class="form-label mt-2">Enter Tags</label>
+          <input type="text"
+                class="form-control"
+                name="tags"
+                placeholder="Enter tags (comma-separated)"
+                value="{{query.tags}}">
 
-            <!-- Category Select -->
-            <label class="form-label mt-2">Select Category</label>
-            <select class="form-select mb-3" name="category">
-              <option value="" {{#unless query.category}}selected{{/unless}}>All Topics</option>
-              <option value="Technology" {{#if (eq query.category "Technology")}}selected{{/if}}>Technology</option>
-              <option value="Gaming" {{#if (eq query.category "Gaming")}}selected{{/if}}>Gaming</option>
-              <option value="Design" {{#if (eq query.category "Design")}}selected{{/if}}>Design</option>
-            </select>
+          <!-- Category Select -->
+          <label class="form-label mt-2">Select Category</label>
+          <select class="form-select mb-3" name="category">
+            <option value="" {{#unless query.category}}selected{{/unless}}>All Topics</option>
+            <option value="Technology" {{#if (eq query.category "Technology")}}selected{{/if}}>Technology</option>
+            <option value="Gaming" {{#if (eq query.category "Gaming")}}selected{{/if}}>Gaming</option>
+            <option value="Design" {{#if (eq query.category "Design")}}selected{{/if}}>Design</option>
+          </select>
 
-            <!-- Sort By Dropdown -->
-            <label class="form-label mt-2">Sort By</label>
-            <select class="form-select mb-3" name="sort">
-              <option value="newest" {{#if (eq query.sort "newest")}}selected{{/if}}>Newest First</option>
-              <option value="oldest" {{#if (eq query.sort "oldest")}}selected{{/if}}>Oldest First</option>
-            </select>
+          <!-- Sort By Dropdown -->
+          <label class="form-label mt-2">Sort By</label>
+          <select class="form-select mb-3" name="sort">
+            <option value="newest" {{#if (eq query.sort "newest")}}selected{{/if}}>Newest First</option>
+            <option value="oldest" {{#if (eq query.sort "oldest")}}selected{{/if}}>Oldest First</option>
+          </select>
 
-            <!-- Apply Filters Button -->
-            <button type="submit" class="btn btn-primary mt-3 w-100">Apply Filters</button>
-          </form>
-        </div>
-      </aside>
+          <!-- Apply Filters Button -->
+          <button type="submit" class="btn btn-primary mt-3 w-100">Apply Filters</button>
+        </form>
+      </div>
+    </aside>
   </div>
 </main>
 
@@ -146,7 +145,6 @@
 <footer class="text-center py-3">
   <p class="mb-0">&copy; 2025 Forum Friends</p>
 </footer>
-
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -193,5 +191,4 @@
         }
     });
 });
-
 </script>

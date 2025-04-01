@@ -405,3 +405,27 @@ footer {
     border-top: 1px solid #444444;  /* Darker border color */
     color: #e0e0e0;  /* White text in dark mode */
 }
+
+/* Floating Add Post Button */
+.create-post-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px; /* Ensure it stays in the bottom right */
+    background-color: var(--btn-primary-bg);
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    z-index: 9999; /* Ensure it stays on top */
+}
+
+.create-post-btn:hover {
+    transform: scale(1.05);
+    background-color: var(--btn-primary-hover-bg);
+}

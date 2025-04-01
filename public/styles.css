@@ -338,5 +338,64 @@ footer {
     background-color: var(--btn-primary-hover-bg);
 }
 
+/* Dark Mode Overrides */
+[data-theme="dark"] .post-card,
+[data-theme="dark"] .post-container,
+[data-theme="dark"] .comment-box,
+[data-theme="dark"] .create-post-container,
+[data-theme="dark"] .content-section,
+[data-theme="dark"] .filter-section,
+[data-theme="dark"] .sidebar,
+[data-theme="dark"] .main-content,
+[data-theme="dark"] .card {
+    background-color: #000000;  /* True black for post containers */
+    border: 1px solid #444444;  /* Soft gray border */
+    color: #ffffff;             /* White text */
+}
+
+/* Post title and post content in dark mode */
+[data-theme="dark"] .post-title,
+[data-theme="dark"] .post-meta,
+[data-theme="dark"] .post p,
+[data-theme="dark"] .comment p {
+    color: #ffffff;
+}
+
+/* Popular posts sidebar link tweaks */
+[data-theme="dark"] .filter-section a,
+[data-theme="dark"] .sidebar a {
+    color: #5cabff; /* Softer blue */
+}
+
+[data-theme="dark"] .filter-section a:hover,
+[data-theme="dark"] .sidebar a:hover {
+    color: #8ac4ff;
+}
+
+/* Placeholder text in inputs (like search bar) in dark mode */
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: #aaaaaa;
+}
+
+/* Form fields in dark mode */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #444444;
+}
+
+/* Buttons (keep them visible on dark) */
+[data-theme="dark"] .btn-primary {
+    background-color: #4e9eff;
+    color: white;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background-color: #007acc;
+}
+
   
 

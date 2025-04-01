@@ -1,0 +1,79 @@
+{{!-- about.hbs --}}
+
+<header class="header">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a href="/home" class="me-3">
+      <img src="/images/forum-friends-logo.png" alt="Forum Friends Logo" class="logo" style="width:180px; height:auto;" />
+    </a>
+    <nav class="d-flex align-items-center">
+      <a href="/about" class="nav-link">About</a>
+      <a href="/home" class="nav-link me-3">Home</a>
+      {{#if user}}
+        <a href="/profile/{{user.username}}" class="nav-link">Profile</a>
+        <a href="/logout" class="nav-link">Logout</a>
+      {{else}}
+        <a href="/login" class="nav-link">Login</a>
+        <a href="/register" class="nav-link">Register</a>
+      {{/if}}
+    </nav>
+  </div>
+</header>
+
+<main class="container py-5">
+  <h1 class="text-center mb-4">About the Project</h1>
+  
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4>Project Overview</h4>
+      <p>This project is a Major Course Output for the CCAPDEV under the supervision of Sir Louis Patrice Lu. The program was designed to enhance user engagement and provide a platform for content creation, discussion, and community building.</p>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4>Developers</h4>
+      <ul>
+        <li>Arcaina, Bryan</li>
+        <li>Dela Cruz, Alec</li>
+        <li>Magbitang, Andre</li>
+        <li>Miranda, Margaux</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4>Technologies and NPM Packages Used</h4>
+      <ul>
+        <li><strong>Node.js</strong> - JavaScript runtime environment</li>
+        <li><strong>Express</strong> - Web framework for Node.js</li>
+        <li><strong>MongoDB</strong> - NoSQL database</li>
+        <li><strong>Handlebars.js</strong> - Templating engine for dynamic HTML rendering</li>
+        <li><strong>Passport.js</strong> - Authentication middleware for Node.js</li>
+        <li><strong>Bootstrap</strong> - Front-end framework for responsive design</li>
+        <li><strong>Body-Parser</strong> - Middleware for parsing incoming request bodies</li>
+        <li><strong>dotenv</strong> - Module to load environment variables from `.env` file</li>
+        <li><strong>Validator</strong> - String validation and sanitization library</li>
+        <li><strong>Bcryptjs</strong> - Password hashing library</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<footer class="text-center py-3">
+  <p class="mb-0">&copy; 2025 Forum Friends</p>
+</footer>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Get the theme stored in localStorage
+    const savedTheme = localStorage.getItem('theme');
+    
+    // If a theme is saved, apply it to the page
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+  });
+</script>

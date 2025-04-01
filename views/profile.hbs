@@ -19,7 +19,7 @@
       Edit Profile
     </a>
     <h3>{{profile.username}}</h3>
-    <p class="text-muted">"{{profile.bio}}"</p>
+    <p>"{{profile.bio}}"</p>
   </div>
 
   <div class="row gy-4">
@@ -32,11 +32,11 @@
             {{#each latestPosts}}
               <div class="mb-3 border-bottom pb-2">
                 <h6><a href="/post/{{_id}}" class="text-decoration-none">{{title}}</a></h6>
-                <p class="text-muted small">Posted {{this.timestamp}} • {{this.votes}} upvotes</p>
+                <p class="small">Posted {{this.timestamp}} • {{this.votes}} upvotes</p>
               </div>
             {{/each}}
           {{else}}
-            <p class="text-muted text-center">No posts yet.</p>
+            <p class="text-center">No posts yet.</p>
           {{/if}}
           <div class="text-center mt-3">
             <a href="/profile/{{profile.username}}/posts" class="btn btn-outline-primary btn-sm">View All Posts</a>
@@ -54,7 +54,7 @@
             {{#each latestComments}}
               <div class="mb-3 border-bottom pb-2">
                 <p>"{{this.text}}"</p>
-                <p class="text-muted small">
+                <p class="small">
                   On: 
                   {{#if this.postId}}
                     <a href="/post/{{this.postId}}" class="text-decoration-none">View Post</a>
@@ -66,7 +66,7 @@
               </div>
             {{/each}}
           {{else}}
-            <p class="text-muted text-center">No comments yet.</p>
+            <p class="text-center">No comments yet.</p>
           {{/if}}
           <div class="text-center mt-3">
             <a href="/profile/{{profile.username}}/comments" class="btn btn-outline-primary btn-sm">View All Comments</a>

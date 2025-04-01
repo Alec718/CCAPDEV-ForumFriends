@@ -32,6 +32,7 @@
     --btn-danger-bg: #DC3545;
     --btn-danger-hover-bg: #c82333;
     --border-color: #444444;
+    --vote-text-color: #ffffff;  /* White for vote count */
 }
 
 /* Body */
@@ -167,13 +168,6 @@ body {
     margin-bottom: 0;
 }
 
-/* Back button */
-.back-button-container {
-    width: auto;
-    padding: 5px 10px;
-    margin: 10px 0;
-}
-
 /* Vote Styling */
 .vote-container {
     display: flex;
@@ -206,6 +200,7 @@ body {
     font-weight: bold;
     min-width: 30px;
     text-align: center;
+    color: var(--vote-text-color); /* Ensure vote count text is white */
 }
 
 /* Profile Styling */
@@ -387,7 +382,7 @@ footer {
     border: 1px solid #444444;
 }
 
-/* Buttons (keep them visible on dark) */
+/* Buttons in Dark Mode */
 [data-theme="dark"] .btn-primary {
     background-color: #4e9eff;
     color: white;
@@ -396,6 +391,3 @@ footer {
 [data-theme="dark"] .btn-primary:hover {
     background-color: #007acc;
 }
-
-  
-

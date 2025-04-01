@@ -47,8 +47,8 @@
     <section class="col-lg-6">
       {{#if posts.length}}
         {{#each posts}}
-          <div class="post-card mb-3 position-relative d-flex align-items-start p-3 rounded shadow-sm" style="background-color: #f8f9fa;">
-            
+          <div class="post-card mb-3 position-relative d-flex align-items-start p-3 rounded shadow-sm">
+          
             <!-- Profile Picture on the Top Left -->
             <a href="/profile/{{this.author}}" class="me-3" style="position: absolute; top: 10px; left: 10px;">
               <img src="{{this.profilePicture}}" alt="Profile Picture" 
@@ -87,6 +87,7 @@
         </div>
       {{/if}}
     </section>
+
 
     <!-- Right Sidebar: Filters -->
       <aside class="col-lg-3">

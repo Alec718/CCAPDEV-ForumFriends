@@ -345,11 +345,12 @@ footer {
     background-color: #007bff;
     color: white;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    text-align: center;
-    line-height: 40px;
-    font-size: 20px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;  /* Adjusted font size for better visibility */
     cursor: pointer;
     transition: opacity 0.3s ease;
   }

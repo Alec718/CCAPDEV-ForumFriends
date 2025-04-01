@@ -4,6 +4,11 @@
   <div class="container d-flex justify-content-between align-items-center">
     <img src="/images/forum-friends-logo.png" alt="Forum Friends Logo" style="width: 180px; height:auto;" />
     <nav class="d-flex gap-3">
+      <!-- Dark Mode Toggle Button -->
+      <button id="darkModeToggle" class="btn btn-secondary" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+        🌙
+      </button>
+
       <a href="/home" class="nav-link active">Home</a>
 
       {{#if user}}
@@ -160,4 +165,31 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });  // Smooth scroll to top
     };
   });
+
+  // Dark mode feature
+  document.addEventListener('DOMContentLoaded', function () {
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    
+    // Check if the user has previously set a theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        darkModeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';  // Change icon based on theme
+    }
+
+    // Toggle Dark Mode
+    darkModeToggle.addEventListener('click', function () {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+            document.documentElement.removeAttribute('data-theme');  // Switch to light mode
+            localStorage.setItem('theme', 'light');
+            darkModeToggle.textContent = '🌙';  // Change icon to dark mode
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');  // Switch to dark mode
+            localStorage.setItem('theme', 'dark');
+            darkModeToggle.textContent = '☀️';  // Change icon to light mode
+        }
+    });
+});
+
 </script>

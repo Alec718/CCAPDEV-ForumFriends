@@ -148,7 +148,7 @@ router.get('/logout', (req, res) => {
 // Profile Route
 router.get('/profile/:username', async (req, res) => {
   const db = req.app.locals.db;
-  const username = req.session.user.username;  // Use the logged-in user's username
+  const username = req.params.username;  // Use the username from the URL parameter
 
   try {
     const user = await db.collection('users').findOne({ username });

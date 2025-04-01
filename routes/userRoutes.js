@@ -148,26 +148,32 @@ router.get('/logout', (req, res) => {
 // Profile Route
 router.get('/profile/:username', async (req, res) => {
   const db = req.app.locals.db;
-  const username = req.params.username;  // Use the username from the URL parameter
+  const loggedInUsername = req.session.user.username;  // Get the logged-in user's username
+  const profileUsername = req.params.username;  // Get the username from the URL parameter
 
   try {
-    const user = await db.collection('users').findOne({ username });
+    const user = await db.collection('users').findOne({ username: profileUsername });
     if (!user) return res.status(404).send("User not found.");
 
-    const posts = await db.collection('posts').find({ author: username }).toArray();
-    const comments = await db.collection('comments').find({ author: username }).toArray();
+    const posts = await db.collection('posts').find({ author: profileUsername }).toArray();
+    const comments = await db.collection('comments').find({ author: profileUsername }).toArray();
+
+    // Check if the logged-in user is viewing their own profile
+    const isOwnProfile = loggedInUsername === profileUsername;
 
     res.render('profile', {
       title: `${user.username} - Profile`,
       profile: user,
       latestPosts: posts.slice(-3),
-      latestComments: comments.slice(-3)
+      latestComments: comments.slice(-3),
+      isOwnProfile: isOwnProfile  // Pass the flag to the view
     });
   } catch (err) {
     console.error('Error fetching profile:', err);
     res.status(500).send("Server error");
   }
 });
+
 
 // Edit Profile Page
 router.get('/edit-profile', async (req, res) => {

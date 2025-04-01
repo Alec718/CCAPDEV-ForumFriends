@@ -15,9 +15,12 @@
   <main class="container py-5">
   <div class="profile-container text-center mb-5 position-relative">
     <img src="{{profile.profilePicture}}" alt="Profile Picture" class="profile-img mb-3" style="width:120px; height:120px; object-fit:cover; border-radius:50%;">
-    <a href="/edit-profile" class="position-absolute top-0 end-0 btn btn-sm btn-outline-primary mt-3 me-3">
-      Edit Profile
-    </a>
+    {{#if isOwnProfile}}
+      <a href="/edit-profile" class="position-absolute top-0 end-0 btn btn-sm btn-outline-primary mt-3 me-3">
+          Edit Profile
+      </a>
+    {{/if}}
+
     <h3>{{profile.username}}</h3>
     <p>"{{profile.bio}}"</p>
   </div>

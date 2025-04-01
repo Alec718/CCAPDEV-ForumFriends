@@ -391,3 +391,17 @@ footer {
 [data-theme="dark"] .btn-primary:hover {
     background-color: #007acc;
 }
+
+/* Footer - Light Mode */
+footer {
+    background-color: var(--footer-background);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+/* Footer - Dark Mode */
+[data-theme="dark"] footer {
+    background-color: #1f1f1f;  /* Dark background for footer */
+    border-top: 1px solid #444444;  /* Darker border color */
+    color: #e0e0e0;  /* White text in dark mode */
+}

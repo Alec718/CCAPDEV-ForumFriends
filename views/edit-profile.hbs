@@ -57,3 +57,15 @@
     previewImage.src = profilePictureURL;
   }
 </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Get the theme stored in localStorage
+    const savedTheme = localStorage.getItem('theme');
+    
+    // If a theme is saved, apply it to the page
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+  });
+</script>

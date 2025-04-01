@@ -44,3 +44,15 @@
 <footer class="text-center py-3">
   <p class="text-muted">&copy; 2025 Forum Friends</p>
 </footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Get the theme stored in localStorage
+    const savedTheme = localStorage.getItem('theme');
+    
+    // If a theme is saved, apply it to the page
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+  });
+</script>

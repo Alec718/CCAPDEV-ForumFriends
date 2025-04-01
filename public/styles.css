@@ -429,3 +429,95 @@ footer {
     transform: scale(1.05);
     background-color: var(--btn-primary-hover-bg);
 }
+
+/* Base Styles for Modals */
+.modal-content {
+    background-color: var(--card-bg);  /* Modal background */
+    border-radius: 10px;
+    color: var(--text-color);           /* Text color */
+    border: 1px solid var(--border-color); /* Modal border */
+}
+
+/* Modal Header */
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+    color: var(--text-color);
+}
+
+/* Modal Body */
+.modal-body {
+    color: var(--text-color);
+}
+
+/* Modal Footer */
+.modal-footer {
+    background-color: var(--background-color);
+    border-top: 1px solid var(--border-color);
+}
+
+/* Button Styling */
+.btn-close {
+    color: var(--text-color);
+}
+
+.btn-secondary, .btn-success {
+    color: var(--text-color);
+    background-color: var(--btn-primary-bg);
+    border: none;
+}
+
+/* Button Hover */
+.btn-secondary:hover, .btn-success:hover {
+    background-color: var(--btn-primary-hover-bg);
+    color: white;
+}
+
+/* Responsive Design for Modals */
+@media (max-width: 768px) {
+    .modal-dialog {
+        max-width: 90%;
+    }
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .modal-content {
+    background-color: #333333; /* Darker modal background */
+    color: #e0e0e0;  /* White text */
+}
+
+[data-theme="dark"] .modal-header {
+    border-bottom: 1px solid #444444;
+}
+
+[data-theme="dark"] .modal-body {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .modal-footer {
+    background-color: #121212;
+    border-top: 1px solid #444444;
+}
+
+[data-theme="dark"] .btn-secondary, [data-theme="dark"] .btn-success {
+    background-color: #4e9eff;
+    color: white;
+}
+
+[data-theme="dark"] .btn-secondary:hover, [data-theme="dark"] .btn-success:hover {
+    background-color: #007acc;
+}
+
+/* Adjust Input and Textarea */
+[data-theme="dark"] .form-control {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #444444;
+}
+
+[data-theme="dark"] .form-control:focus {
+    border-color: #4e9eff;
+    box-shadow: 0 0 0 0.25rem rgba(78, 158, 255, 0.25);
+}

@@ -1,4 +1,5 @@
 {{!-- home.hbs --}}
+
 <header class="header" style="height: auto; padding: 10px 0;">
   <div class="container d-flex justify-content-between align-items-center">
     <img src="/images/forum-friends-logo.png" alt="Forum Friends Logo" style="width: 180px; height:auto;" />
@@ -37,14 +38,13 @@
       </div>
     </aside>
 
-
     <!-- Main Post List -->
     <section class="col-lg-6">
       {{#if posts.length}}
         {{#each posts}}
           <div class="post-card mb-3 position-relative d-flex align-items-start p-3 rounded shadow-sm" style="background-color: #f8f9fa;">
             
-            {{!-- Profile Picture on the Top Left --}}
+            <!-- Profile Picture on the Top Left -->
             <a href="/profile/{{this.author}}" class="me-3" style="position: absolute; top: 10px; left: 10px;">
               <img src="{{this.profilePicture}}" alt="Profile Picture" 
                   class="rounded-circle border" 
@@ -134,6 +134,30 @@
 <!-- Floating Create Post Button -->
 <a href="/create-post" class="create-post-btn text-decoration-none">+</a>
 
+<!-- Jump to Top Button -->
+<a href="#" class="btn btn-primary jump-to-top" id="jumpToTopBtn" style="display: none;">↑</a>
+
 <footer class="text-center py-3" style="background-color: #FFFFFF; border-top: 1px solid #E0E0E0;">
   <p class="text-muted mb-0">&copy; 2025 Forum Friends</p>
 </footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const jumpToTopBtn = document.getElementById("jumpToTopBtn");
+
+    // Show button when scrolled down past the header
+    window.onscroll = function () {
+      if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        jumpToTopBtn.style.display = "block";  // Show button
+      } else {
+        jumpToTopBtn.style.display = "none";   // Hide button
+      }
+    };
+
+    // Scroll to the top when the button is clicked
+    jumpToTopBtn.onclick = function (event) {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });  // Smooth scroll to top
+    };
+  });
+</script>

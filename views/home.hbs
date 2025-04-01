@@ -33,12 +33,12 @@
             {{#each popularPosts}}
               <li class="mb-2">
                 <a href="/post/{{_id}}" class="text-decoration-none fw-bold">{{title}}</a>
-                <p class="small text-muted">{{votes}} upvotes</p>
+                <p class="small">{{votes}} upvotes</p>
               </li>
             {{/each}}
           </ul>
         {{else}}
-          <p class="text-muted">No popular posts yet.</p>
+          <p>No popular posts yet.</p>
         {{/if}}
       </div>
     </aside>
@@ -59,11 +59,11 @@
             <div class="ms-5">
               <a href="/post/{{_id}}" class="post-title h5 text-decoration-none">{{this.title}}</a>
 
-              <p class="text-muted small mb-1">
+              <p class="small mb-1">
                 {{this.commentCount}} {{#if (eq this.commentCount 1)}}comment{{else}}comments{{/if}}
               </p>
 
-              <p class="post-meta text-muted">
+              <p class="post-meta">
                 Posted by <a href="/profile/{{this.author}}" class="text-decoration-none">{{this.author}}</a> on {{this.timestamp}}
               </p>
 

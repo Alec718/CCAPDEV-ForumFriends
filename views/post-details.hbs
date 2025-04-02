@@ -92,6 +92,13 @@
 
         <p>{{post.content}}</p>
 
+        <!-- Check if imageUrl exists, then display image -->
+        {{#if post.imageUrl}}
+          <div class="post-image mt-3">
+            <img src="{{post.imageUrl}}" alt="Post Image" class="img-fluid rounded">
+          </div>
+        {{/if}}
+
         <!-- Post Voting -->
         <div class="post-vote d-flex align-items-center gap-2 mb-3">
           <button 

@@ -162,7 +162,7 @@ router.get('/create-post', (req, res) => {
 // Create Post Route
 router.post('/create-post', async (req, res) => {
     const db = req.app.locals.db;
-    const { postTitle, postContent, postTags, postCategory } = req.body;
+    const { postTitle, postContent, postTags, postCategory, imageUrl } = req.body;  // Include imageUrl here
     const user = req.session.user;
 
     const allowedCategories = ["Technology", "Gaming", "Design"];
@@ -189,7 +189,7 @@ router.post('/create-post', async (req, res) => {
             category: category,
             votes: 0,
             voters: {},
-            imageUrl: imageUrl || '',
+            imageUrl: imageUrl || '',  // Using the imageUrl from the form
         };
 
         await db.collection('posts').insertOne(newPost);
@@ -199,6 +199,7 @@ router.post('/create-post', async (req, res) => {
         res.status(500).send("Error creating post.");
     }
 });
+
 
 
 // Upvote a Post

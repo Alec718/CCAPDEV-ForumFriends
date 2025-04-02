@@ -39,7 +39,13 @@
     <option value="Design">Design</option>
   </select>
 </div>
-      {{!-- The file upload input is removed for now as file handling is not set up --}}
+      <!-- Image URL input -->
+      <div class="mb-3">
+        <label for="postImageURL" class="form-label">Image URL (optional)</label>
+        <input type="url" class="form-control" name="postImageURL" id="postImageURL" placeholder="Enter image URL (optional)">
+        <small class="form-text">Paste the image URL if you want to include an image with your post.</small>
+      </div>
+
       <div class="d-flex justify-content-end gap-2">
         <a href="/home" class="btn btn-secondary">Cancel</a>
         <button type="submit" class="btn btn-primary">Post</button>

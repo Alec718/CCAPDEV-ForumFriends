@@ -10,7 +10,8 @@ const postSchema = new mongoose.Schema({
     votes: { type: Number, default: 0 },
     comments: { type: Array, default: [] },
     voters: { type: Map, of: String, default: {} },  // Fix: Properly define voters as a Map
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    imageUrl: { type: String, default: '' }
 });
 
 const Post = mongoose.model('Post', postSchema);

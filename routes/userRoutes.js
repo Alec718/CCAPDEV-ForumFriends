@@ -166,7 +166,8 @@ router.get('/profile/:username', async (req, res) => {
       profile: user,
       latestPosts: posts.slice(-3),
       latestComments: comments.slice(-3),
-      isOwnProfile: isOwnProfile  // Pass the flag to the view
+      isOwnProfile: isOwnProfile,  // Pass the flag to the view
+      user: user
     });
   } catch (err) {
     console.error('Error fetching profile:', err);

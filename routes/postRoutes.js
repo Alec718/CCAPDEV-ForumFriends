@@ -188,7 +188,8 @@ router.post('/create-post', async (req, res) => {
             tags: postTags ? postTags.split(',').map(tag => tag.trim()) : [],
             category: category,
             votes: 0,
-            voters: {}
+            voters: {},
+            imageUrl: imageUrl || '',
         };
 
         await db.collection('posts').insertOne(newPost);

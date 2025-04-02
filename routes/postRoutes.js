@@ -189,7 +189,7 @@ router.post('/create-post', async (req, res) => {
             category: category,
             votes: 0,
             voters: {},
-            imageUrl: postImageURL || '',
+            imageUrl: imageUrl || '',
         };
 
         await db.collection('posts').insertOne(newPost);

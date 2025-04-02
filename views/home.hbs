@@ -48,7 +48,7 @@
       {{#if posts.length}}
         {{#each posts}}
           <div class="post-card mb-3 position-relative d-flex align-items-start p-3 rounded shadow-sm">
-          
+
             <!-- Profile Picture on the Top Left -->
             <a href="/profile/{{this.author}}" class="me-3" style="position: absolute; top: 10px; left: 10px;">
               <img src="{{this.profilePicture}}" alt="Profile Picture" 
@@ -76,8 +76,15 @@
                 {{/if}}
               </p>
 
+              <!-- Check if an image URL is provided, then display it -->
+              {{#if this.imageUrl}}
+                <div class="post-image mt-3">
+                  <img src="{{this.imageUrl}}" alt="Post Image" class="img-fluid rounded">
+                </div>
+              {{/if}}
+
             </div>
-            
+
           </div>
         {{/each}}
       {{else}}
@@ -87,6 +94,7 @@
         </div>
       {{/if}}
     </section>
+
 
     <!-- Right Sidebar: Filters -->
     <aside class="col-lg-3">

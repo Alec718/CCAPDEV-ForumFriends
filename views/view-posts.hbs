@@ -18,12 +18,12 @@
       {{#each posts}}
         <div class="post mb-4 border-bottom pb-3">
           <h5><a href="/post/{{this._id}}" class="text-decoration-none fw-bold">{{this.title}}</a></h5>
-          <p class="text-muted">Posted on {{this.timestamp}} • {{this.votes}} upvotes</p>
+          <p>Posted on {{this.timestamp}} • {{this.votes}} upvotes</p>
         </div>
       {{/each}}
     </section>
   {{else}}
-    <p class="text-center text-muted">No posts yet.</p>
+    <p class="text-center">No posts yet.</p>
   {{/if}}
 
   <div class="text-center mt-4">

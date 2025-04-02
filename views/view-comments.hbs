@@ -20,7 +20,7 @@
       {{#each comments}}
         <div class="comment-item mb-4 border-bottom pb-3">
           <p>"{{this.text}}"</p>
-          <p class="text-muted">
+          <p class="">
             On: 
             {{#if this.postId}}
               <a href="/post/{{this.postId}}" class="fw-bold text-decoration-none">View Post</a>
@@ -33,7 +33,7 @@
       {{/each}}
     </section>
   {{else}}
-    <p class="text-center text-muted">No comments yet.</p>
+    <p class="text-center">No comments yet.</p>
   {{/if}}
 
   <div class="text-center mt-4">

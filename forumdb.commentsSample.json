@@ -1,0 +1,80 @@
+[{
+  "_id": {
+    "$oid": "67ed23b9ece5d38f674edf67"
+  },
+  "text": "I am replying to this comment as this marks my 1st achievement here.",
+  "author": "test_user1",
+  "timestamp": "4/2/2025, 7:47:05 PM",
+  "postId": {
+    "$oid": "67ed2384ece5d38f674edf66"
+  },
+  "votes": 1,
+  "voters": {
+    "test_user1": "upvote"
+  },
+  "parentCommentId": null
+},
+{
+  "_id": {
+    "$oid": "67ed2466ece5d38f674edf69"
+  },
+  "text": "Looks like I just rickrolled myself!",
+  "author": "test_user2",
+  "timestamp": "4/2/2025, 7:49:58 PM",
+  "postId": {
+    "$oid": "67ed2432ece5d38f674edf68"
+  },
+  "votes": 1,
+  "voters": {
+    "test_user2": "upvote"
+  },
+  "parentCommentId": null
+},
+{
+  "_id": {
+    "$oid": "67ed2538ece5d38f674edf6b"
+  },
+  "text": "It took me ages to defeat her!",
+  "author": "test_user3",
+  "timestamp": "4/2/2025, 7:53:28 PM",
+  "postId": {
+    "$oid": "67ed2528ece5d38f674edf6a"
+  },
+  "votes": 1,
+  "voters": {
+    "test_user3": "upvote"
+  },
+  "parentCommentId": null
+},
+{
+  "_id": {
+    "$oid": "67ed2578ece5d38f674edf6d"
+  },
+  "text": "I must say it looks cool!",
+  "author": "test_user4",
+  "timestamp": "4/2/2025, 7:54:32 PM",
+  "postId": {
+    "$oid": "67ed2567ece5d38f674edf6c"
+  },
+  "votes": 1,
+  "voters": {
+    "test_user4": "upvote"
+  },
+  "parentCommentId": null
+},
+{
+  "_id": {
+    "$oid": "67ed25d8ece5d38f674edf6f"
+  },
+  "text": "Well, I'm disappointed.",
+  "author": "test_user5",
+  "timestamp": "4/2/2025, 7:56:08 PM",
+  "postId": {
+    "$oid": "67ed25c5ece5d38f674edf6e"
+  },
+  "votes": 1,
+  "voters": {
+    "test_user5": "upvote"
+  },
+  "parentCommentId": null
+}]

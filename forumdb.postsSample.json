@@ -1,0 +1,104 @@
+[{
+  "_id": {
+    "$oid": "67ed2384ece5d38f674edf66"
+  },
+  "title": "Hello World",
+  "content": "I may have been the 1st user to post in this platform... Hello World!!",
+  "author": "test_user1",
+  "profilePicture": "/images/blank-profile-picture.png",
+  "timestamp": "4/2/2025, 7:46:12 PM",
+  "tags": [
+    "welcome",
+    "programming",
+    "hello",
+    "world"
+  ],
+  "category": "Technology",
+  "votes": 1,
+  "voters": {
+    "test_user1": "upvote"
+  },
+  "imageUrl": "https://miro.medium.com/v2/resize:fit:1024/1*OohqW5DGh9CQS4hLY5FXzA.png"
+},
+{
+  "_id": {
+    "$oid": "67ed2432ece5d38f674edf68"
+  },
+  "title": "You are rickrolled!",
+  "content": "Never gonna give you up! Never gonna let you down! Never gonna run around and desert you!",
+  "author": "test_user2",
+  "profilePicture": "/images/blank-profile-picture.png",
+  "timestamp": "4/2/2025, 7:49:06 PM",
+  "tags": [
+    "rickroll"
+  ],
+  "category": "Gaming",
+  "votes": 1,
+  "voters": {
+    "test_user2": "upvote"
+  },
+  "imageUrl": "https://www.todayifoundout.com/wp-content/uploads/2017/11/rick-astley.png"
+},
+{
+  "_id": {
+    "$oid": "67ed2528ece5d38f674edf6a"
+  },
+  "title": "HOW DO I BEAT MALENIA?!",
+  "content": "HOW DO I BEAT MALENIA?! SHE'S IMPOSSIBLE TO DEFEAT.",
+  "author": "test_user3",
+  "profilePicture": "/images/blank-profile-picture.png",
+  "timestamp": "4/2/2025, 7:53:12 PM",
+  "tags": [
+    "eldenring",
+    "malenia",
+    "boss"
+  ],
+  "category": "Gaming",
+  "votes": 1,
+  "voters": {
+    "test_user3": "upvote"
+  },
+  "imageUrl": "https://i.ytimg.com/vi/9fTOm2H5PUs/maxresdefault.jpg"
+},
+{
+  "_id": {
+    "$oid": "67ed2567ece5d38f674edf6c"
+  },
+  "title": "Design Test",
+  "content": "I did something. Check it out!",
+  "author": "test_user4",
+  "profilePicture": "/images/blank-profile-picture.png",
+  "timestamp": "4/2/2025, 7:54:15 PM",
+  "tags": [
+    "design",
+    "art"
+  ],
+  "category": "Design",
+  "votes": 1,
+  "voters": {
+    "test_user4": "upvote"
+  },
+  "imageUrl": "https://a.storyblok.com/f/262429/1280x1920/07372621d1/digital-design.jpg/m/"
+},
+{
+  "_id": {
+    "$oid": "67ed25c5ece5d38f674edf6e"
+  },
+  "title": "NERF CLAUDIO!",
+  "content": "CLAUDIO IS BROKEN! NERF HIM TO THE GROUND!",
+  "author": "test_user5",
+  "profilePicture": "/images/blank-profile-picture.png",
+  "timestamp": "4/2/2025, 7:55:49 PM",
+  "tags": [
+    "tekken",
+    "tekken8",
+    "claudio",
+    "nerf"
+  ],
+  "category": "Gaming",
+  "votes": 1,
+  "voters": {
+    "test_user5": "upvote"
+  },
+  "imageUrl": "https://preview.redd.it/bio-and-screenshots-of-claudio-v0-m2pttzxcmwcb1.jpg?width=640&crop=smart&auto=webp&s=0192d91e1556e57be10dbadc874a83626ac1d66d"
+}]
